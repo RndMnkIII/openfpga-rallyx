@@ -1,6 +1,7 @@
 # Local-only: reference checkouts and packaged SD output
 .repos/
 release/
+PORT_PLAN.md
 
 # Quartus build databases and outputs (regenerated on compile)
 db/
