@@ -1,0 +1,49 @@
+# Local-only: reference checkouts and packaged SD output
+.repos/
+release/
+
+# Quartus build databases and outputs (regenerated on compile)
+db/
+incremental_db/
+output_files/
+greybox_tmp/
+hc_output/
+simulation/
+.qsys_edit/
+
+# Generated IP simulation models
+*_sim/
+*_sim.f
+
+# Generated build ID (pre-flow script recreates these each build)
+build_id.v
+build_id.mif
+
+# Generated IP metadata (the .qip/.sip/.v sources are kept)
+*.bsf
+*.ppf
+*.spd
+
+# Quartus reports / temp / programming artifacts
+*.rpt
+*.summary
+*.smsg
+*.done
+*.jdi
+*.pin
+*.qws
+*.qdf
+*.sof
+*.rbf
+*.rbf_r
+PLLJ_PLLSPE_INFO.txt
+c5_pin_model_dump.txt
+
+# Editor / patch junk
+*.bak
+*.orig
+*.rej
+*~
+
+# Release archives (built by package.ps1 -Zip)
+*.zip
