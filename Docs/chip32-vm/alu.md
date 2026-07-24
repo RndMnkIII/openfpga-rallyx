@@ -1,0 +1,21 @@
+# ALU
+
+## Opcodes
+
+| Opcode      | Action                       | Flags | Description                                                                                                                                                                                                                                                                                            |
+| ----------- | ---------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ADD Rx,#`  | Rx <= Rx + Imm               | Z, C  | Rx is added to an Immediate 16 or 32 bit value with the result written back to Rx. The C Flag is set on carry<br>(i.e. the register wraps from `FFFFFFFF` to `00000000`). The Z flag is set if the result is zero                                                                                      |
+| `SUB Rx,#`  | Rx <= Rx - Imm               | Z, C  | An immediate 16 or 32 bit value is subtracted from Rx and the result is written back to Rx. The C Flag is set if there is a borrow (i.e. wraps from`00000000` to `FFFFFFFF`). The Z flag is set if the result is zero                                                                                  |
+| `CMP Rx,#`  | Z and C <= Rx = Imm          | Z, C  | An immediate 16 or 32 bit value is subtracted from Rx, but only flags are updated. Rx is unmodified. The C Flag is set on borrow. The Z flag is set if the result is zero                                                                                                                              |
+| `ADD Rx,Ry` | Rx <= Rx + Ry                | Z, C  | Rx is added to Ry, and the result is written back into Rx. The C Flag is set on carry. The Z flag is set if the result is zero.                                                                                                                                                                        |
+| `SUB Rx,Ry` | Rx <= Rx - Ry                | Z, C  | Ry is subtracted from Rx, and the result is written back to Rx. The C Flag is set on carry. The Z flag is set if the result is zero.                                                                                                                                                                   |
+| `CMP Rx,Ry` | Z and C <= Rx = Ry           | Z, C  | Ry is subtracted from Rx, but only the flags are updated. Rx is unmodified. The C Flag is set on borrow. The Z flag is set if the result is zero.                                                                                                                                                      |
+| `MUL Rx,Ry` | Rx ← Rx * Ry                 | Z     | Rx and Ry are multiplied together, with the result put into Rx. The Z flag is set if the result is zero.                                                                                                                                                                                               |
+| `DIV Rx,Ry` | Rx ← Rx / Ry<br>Ry ← Rx % Ry | Z, C  | This instruction performs two functions at once. Rx is divided by Ry, and the quotient is placed into Rx, and the remainder is placed into Ry. The Z flag is set if the quotient (Rx) is zero. The C flag is set if the remainder (Ry) is zero. If dividing by 0 is attempted, will generate an error. |
+| `CLC`       | C ← 0                        | C     | Clears the Carry Flag                                                                                                                                                                                                                                                                                  |
+| `SEC`       | C ← 1                        | C     | Sets the Carry Flag                                                                                                                                                                                                                                                                                    |
+
+## Notes
+
+* Z Flag used for result is zero
+* C Flag used for overflow on ALU

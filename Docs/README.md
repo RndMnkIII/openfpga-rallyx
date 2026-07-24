@@ -1,0 +1,41 @@
+# openFPGA Developer Docs
+
+Local copy of the Analogue openFPGA developer documentation, ported from
+<https://www.analogue.co/developer/docs/overview>.
+
+## Contents
+
+* [Overview](./overview.md)
+* [Getting Started](./getting-started.md)
+* [Directories and SD Folder Structure](./directories-and-sd-folder-structure.md)
+* [Core Definition Files](./core-definition-files.md)
+    * [core.json](./core-definition-files/core-json.md)
+    * [audio.json](./core-definition-files/audio-json.md)
+    * [data.json](./core-definition-files/data-json.md)
+    * [input.json](./core-definition-files/input-json.md)
+    * [instance.json](./core-definition-files/instance-json.md)
+    * [interact.json](./core-definition-files/interact-json.md)
+    * [variants.json](./core-definition-files/variants-json.md)
+    * [video.json](./core-definition-files/video-json.md)
+* [Bus Communication](./bus-communication.md)
+* [External Hardware](./external-hardware.md)
+* [Host/Target Commands](./host-target-commands.md)
+* [Core Boot Process](./core-boot-process.md)
+* [Chip32 VM](./chip32-vm.md)
+    * [Initialization of the Chip32 VM](./chip32-vm/initialization-of-the-chip32-vm.md)
+    * [ALU](./chip32-vm/alu.md)
+    * [ALU Logic](./chip32-vm/alu-logic.md)
+    * [Shift](./chip32-vm/shift.md)
+    * [Load and Store](./chip32-vm/load-and-store.md)
+    * [Jump and Flow Control](./chip32-vm/jump-and-flow-control.md)
+    * [File Process](./chip32-vm/file-process.md)
+    * [Special](./chip32-vm/special.md)
+    * [Debugging](./chip32-vm/debugging.md)
+    * [Opcode Mnemonic](./chip32-vm/opcode-mnemonic.md)
+* [Custom Interact UI](./custom-interact-ui.md)
+* [Platform Metadata](./platform-metadata.md)
+* [Packaging a Core](./packaging-a-core.md)
+* [Library](./library.md)
+* [Custom Palettes](./custom-palettes.md)
+* [Debugging Aids](./debugging-aids.md)
+* [Changelog](./changelog.md)
