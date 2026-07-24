@@ -16,7 +16,7 @@ module core_top (
 // clock inputs 74.25mhz. not phase aligned, so treat these domains as asynchronous
 
 input   wire            clk_74a, // mainclk1
-input   wire            clk_74b, // mainclk1 
+input   wire            clk_74b, // mainclk1
 
 ///////////////////////////////////////////////////
 // cartridge interface
@@ -59,7 +59,7 @@ output  wire            cart_tran_pin31_dir,
 // infrared
 input   wire            port_ir_rx,
 output  wire            port_ir_tx,
-output  wire            port_ir_rx_disable, 
+output  wire            port_ir_rx_disable,
 
 // GBA link port
 inout   wire            port_tran_si,
@@ -70,7 +70,7 @@ inout   wire            port_tran_sck,
 output  wire            port_tran_sck_dir,
 inout   wire            port_tran_sd,
 output  wire            port_tran_sd_dir,
- 
+
 ///////////////////////////////////////////////////
 // cellular psram 0 and 1, two chips (64mbit x2 dual die per chip)
 
@@ -141,7 +141,7 @@ output  wire            user1,
 input   wire            user2,
 
 ///////////////////////////////////////////////////
-// RFU internal i2c bus 
+// RFU internal i2c bus
 
 inout   wire            aux_sda,
 output  wire            aux_scl,
@@ -164,7 +164,7 @@ output  wire            video_de,
 output  wire            video_skip,
 output  wire            video_vs,
 output  wire            video_hs,
-    
+
 output  wire            audio_mclk,
 input   wire            audio_adc,
 output  wire            audio_dac,
@@ -182,7 +182,7 @@ input   wire    [31:0]  bridge_wr_data,
 
 ///////////////////////////////////////////////////
 // controller data
-// 
+//
 // key bitmap:
 //   [0]    dpad_up
 //   [1]    dpad_down
@@ -222,7 +222,7 @@ input   wire    [15:0]  cont1_trig,
 input   wire    [15:0]  cont2_trig,
 input   wire    [15:0]  cont3_trig,
 input   wire    [15:0]  cont4_trig
-    
+
 );
 
 // not using the IR port, so turn off both the LED, and
@@ -333,10 +333,10 @@ end
 //
     wire            reset_n;                // driven by host commands, can be used as core-wide reset
     wire    [31:0]  cmd_bridge_rd_data;
-    
+
 // bridge host commands
 // synchronous to clk_74a
-    wire            status_boot_done = pll_core_locked_s; 
+    wire            status_boot_done = pll_core_locked_s;
     wire            status_setup_done = pll_core_locked_s; // rising edge triggers a target command
     wire            status_running = reset_n; // we are running as soon as reset_n goes high
 
@@ -354,7 +354,7 @@ end
     wire            dataslot_update;
     wire    [15:0]  dataslot_update_id;
     wire    [31:0]  dataslot_update_size;
-    
+
     wire            dataslot_allcomplete;
 
     wire     [31:0] rtc_epoch_seconds;
@@ -378,18 +378,18 @@ end
     wire            savestate_load_busy;
     wire            savestate_load_ok;
     wire            savestate_load_err;
-    
+
     wire            osnotify_inmenu;
 
 // bridge target commands
 // synchronous to clk_74a
 
-    reg             target_dataslot_read;       
+    reg             target_dataslot_read;
     reg             target_dataslot_write;
     reg             target_dataslot_getfile;    // require additional param/resp structs to be mapped
     reg             target_dataslot_openfile;   // require additional param/resp structs to be mapped
-    
-    wire            target_dataslot_ack;        
+
+    wire            target_dataslot_ack;
     wire            target_dataslot_done;
     wire    [2:0]   target_dataslot_err;
 
@@ -397,10 +397,10 @@ end
     reg     [31:0]  target_dataslot_slotoffset;
     reg     [31:0]  target_dataslot_bridgeaddr;
     reg     [31:0]  target_dataslot_length;
-    
+
     wire    [31:0]  target_buffer_param_struct; // to be mapped/implemented when using some Target commands
     wire    [31:0]  target_buffer_resp_struct;  // to be mapped/implemented when using some Target commands
-    
+
 // bridge data slot access
 // synchronous to clk_74a
 
@@ -420,7 +420,7 @@ core_bridge_cmd icb (
     .bridge_rd_data         ( cmd_bridge_rd_data ),
     .bridge_wr              ( bridge_wr ),
     .bridge_wr_data         ( bridge_wr_data ),
-    
+
     .status_boot_done       ( status_boot_done ),
     .status_setup_done      ( status_setup_done ),
     .status_running         ( status_running ),
@@ -439,14 +439,14 @@ core_bridge_cmd icb (
     .dataslot_update            ( dataslot_update ),
     .dataslot_update_id         ( dataslot_update_id ),
     .dataslot_update_size       ( dataslot_update_size ),
-    
+
     .dataslot_allcomplete   ( dataslot_allcomplete ),
 
     .rtc_epoch_seconds      ( rtc_epoch_seconds ),
     .rtc_date_bcd           ( rtc_date_bcd ),
     .rtc_time_bcd           ( rtc_time_bcd ),
     .rtc_valid              ( rtc_valid ),
-    
+
     .savestate_supported    ( savestate_supported ),
     .savestate_addr         ( savestate_addr ),
     .savestate_size         ( savestate_size ),
@@ -465,12 +465,12 @@ core_bridge_cmd icb (
     .savestate_load_err     ( savestate_load_err ),
 
     .osnotify_inmenu        ( osnotify_inmenu ),
-    
+
     .target_dataslot_read       ( target_dataslot_read ),
     .target_dataslot_write      ( target_dataslot_write ),
     .target_dataslot_getfile    ( target_dataslot_getfile ),
     .target_dataslot_openfile   ( target_dataslot_openfile ),
-    
+
     .target_dataslot_ack        ( target_dataslot_ack ),
     .target_dataslot_done       ( target_dataslot_done ),
     .target_dataslot_err        ( target_dataslot_err ),
@@ -482,7 +482,7 @@ core_bridge_cmd icb (
 
     .target_buffer_param_struct ( target_buffer_param_struct ),
     .target_buffer_resp_struct  ( target_buffer_resp_struct ),
-    
+
     .datatable_addr         ( datatable_addr ),
     .datatable_wren         ( datatable_wren ),
     .datatable_data         ( datatable_data ),
@@ -493,111 +493,166 @@ core_bridge_cmd icb (
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
+// Rally-X game core + ROM loader + controls
+////////////////////////////////////////////////////////////////////////////////////////
+
+// ---- ROM download: bridge writes -> data_loader -> game ROM download port ----
+// data_loader (agg23, MIT) buffers APF bridge writes across the clock domain and
+// emits a byte-wise write stream. Rally-X ROMs are a single ~21KB blob loaded at
+// bridge address 0x00000000; see PORT_PLAN.md for the byte layout.
+    wire        ioctl_wr;
+    wire [24:0] ioctl_addr;
+    wire  [7:0] ioctl_dout;
+
+data_loader #(
+    .ADDRESS_MASK_UPPER_4 ( 4'h0 ),
+    .ADDRESS_SIZE         ( 25 ),
+    .OUTPUT_WORD_SIZE     ( 1 )
+) rom_loader (
+    .clk_74a              ( clk_74a ),
+    .clk_memory           ( clk_core_24576 ),
+
+    .bridge_wr            ( bridge_wr ),
+    .bridge_endian_little ( bridge_endian_little ),
+    .bridge_addr          ( bridge_addr ),
+    .bridge_wr_data       ( bridge_wr_data ),
+
+    .write_en             ( ioctl_wr ),
+    .write_addr           ( ioctl_addr ),
+    .write_data           ( ioctl_dout )
+);
+
+// ---- hold the game in reset until all ROM slots are loaded ----
+// tracked in the clk_74a (bridge) domain, then synchronized into the game clock.
+    reg  download_active = 1'b0;
+    reg  download_done   = 1'b0;
+always @(posedge clk_74a) begin
+    if (dataslot_requestwrite) begin
+        download_active <= 1'b1;
+        download_done   <= 1'b0;
+    end else if (dataslot_allcomplete) begin
+        download_active <= 1'b0;
+        download_done   <= 1'b1;
+    end
+end
+
+    wire download_done_s;
+    wire reset_n_s;
+synch_3 s_dl (download_done, download_done_s, clk_core_24576);
+synch_3 s_rn (reset_n,       reset_n_s,       clk_core_24576);
+    // active-high game reset: held until ROMs are loaded AND host reset released
+    wire game_reset = ~reset_n_s | ~download_done_s;
+
+// ---- controls: cont1_key (active-high) -> CTR1 (active-low) ----
+// CTR bit order (MSB..LSB): {coin, start, up, down, right, left, smoke, unused}
+    wire [7:0] ctr1 = ~{ cont1_key[14], cont1_key[15], cont1_key[0],
+                         cont1_key[1],  cont1_key[3],  cont1_key[2],
+                         cont1_key[4],  1'b0 };
+    wire [7:0] ctr2 = 8'hFF;   // P2 unused for now (active-low idle)
+
+// ---- game instance + external HVGEN video-timing generator ----
+    wire  [8:0] rx_hpos, rx_vpos;
+    wire        rx_pclk;
+    wire  [7:0] rx_pout;
+    wire  [7:0] rx_snd;
+    wire [11:0] rx_orgb;
+    wire        rx_hblk, rx_vblk, rx_hsyn, rx_vsyn;
+
+fpga_NRX game (
+    .RESET       ( game_reset ),
+    .CLK24M      ( clk_core_24576 ),
+
+    .HP          ( rx_hpos ),
+    .VP          ( rx_vpos ),
+    .PCLK        ( rx_pclk ),
+    .POUT        ( rx_pout ),
+
+    .SND         ( rx_snd ),
+
+    .DSW         ( 8'h00 ),
+    .CTR1        ( ctr1 ),
+    .CTR2        ( ctr2 ),
+
+    .LAMP        (  ),
+
+    .ROMCL       ( clk_core_24576 ),
+    .ROMAD       ( ioctl_addr[15:0] ),
+    .ROMDT       ( ioctl_dout ),
+    .ROMEN       ( ioctl_wr ),
+
+    .pause       ( 1'b0 ),
+
+    .hs_address  ( 16'h0 ),
+    .hs_data_in  ( 8'h0 ),
+    .hs_data_out (  ),
+    .hs_write    ( 1'b0 ),
+    .hs_access   ( 1'b0 )
+);
+
+HVGEN hvgen (
+    .HPOS ( rx_hpos ),
+    .VPOS ( rx_vpos ),
+    .PCLK ( rx_pclk ),
+    .iRGB ( { rx_pout[7:6], 2'b00, rx_pout[5:3], 1'b0, rx_pout[2:0], 1'b0 } ),
+    .oRGB ( rx_orgb ),
+    .HBLK ( rx_hblk ),
+    .VBLK ( rx_vblk ),
+    .HSYN ( rx_hsyn ),
+    .VSYN ( rx_vsyn )
+);
 
 
-
-// video generation
-// ~12,288,000 hz pixel clock
-//
-// we want our video mode of 320x240 @ 60hz, this results in 204800 clocks per frame
-// we need to add hblank and vblank times to this, so there will be a nondisplay area. 
-// it can be thought of as a border around the visible area.
-// to make numbers simple, we can have 400 total clocks per line, and 320 visible.
-// dividing 204800 by 400 results in 512 total lines per frame, and 240 visible.
-// this pixel clock is fairly high for the relatively low resolution, but that's fine.
-// PLL output has a minimum output frequency anyway.
+////////////////////////////////////////////////////////////////////////////////////////
 
 
-assign video_rgb_clock = clk_core_12288;
-assign video_rgb_clock_90 = clk_core_12288_90deg;
+// video output to the APF scaler, generated in the 6.144 MHz pixel-clock domain.
+// The game (via HVGEN) produces its picture on its own PCLK (= CLK24M/4). Because the
+// 6.144 MHz output clock and CLK24M come from the same PLL, that crossing is
+// synchronous (constant phase) and timed by STA, so a single resample register is safe.
+
+assign video_rgb_clock = clk_core_6144;
+assign video_rgb_clock_90 = clk_core_6144_90deg;
 assign video_rgb = vidout_rgb;
 assign video_de = vidout_de;
 assign video_skip = vidout_skip;
 assign video_vs = vidout_vs;
 assign video_hs = vidout_hs;
 
-    localparam  VID_V_BPORCH = 'd10;
-    localparam  VID_V_ACTIVE = 'd240;
-    localparam  VID_V_TOTAL = 'd512;
-    localparam  VID_H_BPORCH = 'd10;
-    localparam  VID_H_ACTIVE = 'd320;
-    localparam  VID_H_TOTAL = 'd400;
-
-    reg [15:0]  frame_count;
-    
-    reg [9:0]   x_count;
-    reg [9:0]   y_count;
-    
-    wire [9:0]  visible_x = x_count - VID_H_BPORCH;
-    wire [9:0]  visible_y = y_count - VID_V_BPORCH;
-
     reg [23:0]  vidout_rgb;
-    reg         vidout_de, vidout_de_1;
+    reg         vidout_de;
     reg         vidout_skip;
     reg         vidout_vs;
-    reg         vidout_hs, vidout_hs_1;
-    
-    reg [9:0]   square_x = 'd135;
-    reg [9:0]   square_y = 'd95;
+    reg         vidout_hs;
 
-always @(posedge clk_core_12288 or negedge reset_n) begin
+    // resample the game-domain video signals into the pixel-clock domain
+    reg [11:0]  g_rgb;
+    reg         g_hblk, g_vblk, g_hsyn, g_vsyn;
+    reg         g_hsyn_d, g_vsyn_d;
 
-    if(~reset_n) begin
-    
-        x_count <= 0;
-        y_count <= 0;
-        
-    end else begin
-        vidout_de <= 0;
-        vidout_skip <= 0;
-        vidout_vs <= 0;
-        vidout_hs <= 0;
-        
-        vidout_hs_1 <= vidout_hs;
-        vidout_de_1 <= vidout_de;
-        
-        // x and y counters
-        x_count <= x_count + 1'b1;
-        if(x_count == VID_H_TOTAL-1) begin
-            x_count <= 0;
-            
-            y_count <= y_count + 1'b1;
-            if(y_count == VID_V_TOTAL-1) begin
-                y_count <= 0;
-            end
-        end
-        
-        // generate sync 
-        if(x_count == 0 && y_count == 0) begin
-            // sync signal in back porch
-            // new frame
-            vidout_vs <= 1;
-            frame_count <= frame_count + 1'b1;
-        end
-        
-        // we want HS to occur a bit after VS, not on the same cycle
-        if(x_count == 3) begin
-            // sync signal in back porch
-            // new line
-            vidout_hs <= 1;
-        end
+always @(posedge clk_core_6144) begin
+    g_rgb    <= rx_orgb;
+    g_hblk   <= rx_hblk;
+    g_vblk   <= rx_vblk;
+    g_hsyn   <= rx_hsyn;
+    g_vsyn   <= rx_vsyn;
+    g_hsyn_d <= g_hsyn;
+    g_vsyn_d <= g_vsyn;
 
-        // inactive screen areas are black
+    vidout_skip <= 1'b0;
+
+    // data enable: high across the whole active line, low during blanking
+    vidout_de <= ~(g_hblk | g_vblk);
+
+    // oRGB is {blue,green,red} 4-bit nibbles; expand to RGB888 by nibble
+    // replication. Must be zero whenever DE is deasserted.
+    if (~(g_hblk | g_vblk))
+        vidout_rgb <= { {2{g_rgb[3:0]}}, {2{g_rgb[7:4]}}, {2{g_rgb[11:8]}} };
+    else
         vidout_rgb <= 24'h0;
-        // generate active video
-        if(x_count >= VID_H_BPORCH && x_count < VID_H_ACTIVE+VID_H_BPORCH) begin
 
-            if(y_count >= VID_V_BPORCH && y_count < VID_V_ACTIVE+VID_V_BPORCH) begin
-                // data enable. this is the active region of the line
-                vidout_de <= 1;
-                
-                vidout_rgb[23:16] <= 8'd60;
-                vidout_rgb[15:8]  <= 8'd60;
-                vidout_rgb[7:0]   <= 8'd60;
-                
-            end 
-        end
-    end
+    // single-cycle sync pulses on the falling edge of the active-low HVGEN syncs
+    vidout_hs <= g_hsyn_d & ~g_hsyn;
+    vidout_vs <= g_vsyn_d & ~g_vsyn;
 end
 
 
@@ -606,6 +661,7 @@ end
 //
 // audio i2s silence generator
 // see other examples for actual audio generation
+// (real Rally-X audio is wired in a later step)
 //
 
 assign audio_mclk = audgen_mclk;
@@ -632,10 +688,10 @@ always @(posedge audgen_mclk) begin
     aud_mclk_divider <= aud_mclk_divider + 1'b1;
 end
 
-// shift out audio data as I2S 
+// shift out audio data as I2S
 // 32 total bits per channel, but only 16 active bits at the start and then 16 dummy bits
 //
-    reg     [4:0]   audgen_lrck_cnt;    
+    reg     [4:0]   audgen_lrck_cnt;
     reg             audgen_lrck;
     reg             audgen_dac;
 always @(negedge audgen_sclk) begin
@@ -645,8 +701,8 @@ always @(negedge audgen_sclk) begin
     if(audgen_lrck_cnt == 31) begin
         // switch channels
         audgen_lrck <= ~audgen_lrck;
-        
-    end 
+
+    end
 end
 
 
@@ -655,7 +711,10 @@ end
 
     wire    clk_core_12288;
     wire    clk_core_12288_90deg;
-    
+    wire    clk_core_24576;         // Rally-X master clock (CLK24M)
+    wire    clk_core_6144;          // pixel clock 0deg   -> video_rgb_clock
+    wire    clk_core_6144_90deg;    // pixel clock 90deg  -> video_rgb_clock_90
+
     wire    pll_core_locked;
     wire    pll_core_locked_s;
 synch_3 s01(pll_core_locked, pll_core_locked_s, clk_74a);
@@ -663,13 +722,16 @@ synch_3 s01(pll_core_locked, pll_core_locked_s, clk_74a);
 mf_pllbase mp1 (
     .refclk         ( clk_74a ),
     .rst            ( 0 ),
-    
+
     .outclk_0       ( clk_core_12288 ),
     .outclk_1       ( clk_core_12288_90deg ),
-    
+    .outclk_2       ( clk_core_24576 ),
+    .outclk_3       ( clk_core_6144 ),
+    .outclk_4       ( clk_core_6144_90deg ),
+
     .locked         ( pll_core_locked )
 );
 
 
-    
+
 endmodule
