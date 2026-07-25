@@ -1,4 +1,4 @@
-## Namco [Rally-X] Compatible Gateware IP Core
+## openFPGA-RallyX
 
 An openFPGA port of the **New Rally-X** arcade hardware for the Analogue Pocket,
 based on the [MiSTer Rally-X core] by [MiSTer-X].
@@ -92,6 +92,12 @@ The FPGA project lives in `src/fpga/` (Intel Quartus Prime Lite 21.1, Cyclone V
 | [Data Loader]     | 2022 (c) Adam Gastineau (MIT)                  |
 | [pocket_i2s]      | Analogue APF example, packaged by opengateware |
 | APF core template | (c) Analogue                                   |
+
+## License
+
+Released under the [GNU General Public License v3.0](LICENSE), inherited from the
+GPLv3 MiSTer Rally-X core this is based on. Bundled components keep their own
+licenses: the APF Data Loader (MIT) and the T80 CPU (BSD-style).
 
 ## Legal Notices
 
