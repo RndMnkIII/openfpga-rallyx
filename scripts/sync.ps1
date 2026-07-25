@@ -11,9 +11,9 @@ $ErrorActionPreference = "Stop"
 
 $ReferenceRepos = @(
     @{ Name = "arcade-rallyx_mister"; Url = "https://github.com/MiSTer-devel/Arcade-RallyX_MiSTer.git"; Ref = $null }
-    @{ Name = "mister-arcade-rallyx"; Url = "https://github.com/MrX-8B/MiSTer-Arcade-RallyX.git"; Ref = $null }
     @{ Name = "openfpga-atarisystem1"; Url = "https://github.com/obsidian-dot-dev/openFPGA-AtariSystem1.git"; Ref = $null }
     @{ Name = "openfpga-snes-analogizer"; Url = "https://github.com/RndMnkIII/openfpga-SNES-Analogizer.git"; Ref = $null }
+    @{ Name = "arcade-digdug"; Url = "https://github.com/opengateware/arcade-digdug.git"; Ref = $null }
 )
 
 if (-not $Root) { $Root = Split-Path -Parent $PSScriptRoot }
