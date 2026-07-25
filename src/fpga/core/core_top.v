@@ -618,21 +618,34 @@ assign video_skip = vidout_skip;
 assign video_vs = vidout_vs;
 assign video_hs = vidout_hs;
 
+    // Active window is defined from HVGEN's position counters for a pixel-exact
+    // 288x224 raster. HVGEN registers its pixel output (oRGB lags HPOS by one
+    // pixel), which without compensation shifts the image right -> margin on the
+    // left, clip on the right. H_OFF cancels that lag. Nudge H_OFF/V_OFF by +/-1
+    // to fine-tune centering on hardware.
+    localparam [8:0] H_ACT = 9'd288;
+    localparam [8:0] V_ACT = 9'd224;
+    localparam [8:0] H_OFF = 9'd1;
+    localparam [8:0] V_OFF = 9'd0;
+
     reg [23:0]  vidout_rgb;
     reg         vidout_de;
     reg         vidout_skip;
     reg         vidout_vs;
     reg         vidout_hs;
 
-    // resample the game-domain video signals into the pixel-clock domain
+    // resample the game-domain video into the pixel-clock domain
     reg [11:0]  g_rgb;
-    reg         g_hblk, g_vblk, g_hsyn, g_vsyn;
-    reg         g_hsyn_d, g_vsyn_d;
+    reg  [8:0]  g_hpos, g_vpos;
+    reg         g_hsyn, g_vsyn, g_hsyn_d, g_vsyn_d;
+
+    wire h_active = (g_hpos >= H_OFF) && (g_hpos < H_OFF + H_ACT);
+    wire v_active = (g_vpos >= V_OFF) && (g_vpos < V_OFF + V_ACT);
 
 always @(posedge clk_core_6144) begin
     g_rgb    <= rx_orgb;
-    g_hblk   <= rx_hblk;
-    g_vblk   <= rx_vblk;
+    g_hpos   <= rx_hpos;
+    g_vpos   <= rx_vpos;
     g_hsyn   <= rx_hsyn;
     g_vsyn   <= rx_vsyn;
     g_hsyn_d <= g_hsyn;
@@ -640,15 +653,15 @@ always @(posedge clk_core_6144) begin
 
     vidout_skip <= 1'b0;
 
-    // data enable: high across the whole active line, low during blanking
-    vidout_de <= ~(g_hblk | g_vblk);
-
-    // oRGB is {blue,green,red} 4-bit nibbles; expand to RGB888 by nibble
-    // replication. Must be zero whenever DE is deasserted.
-    if (~(g_hblk | g_vblk))
+    // data enable + pixel, gated by the exact active window.
+    // oRGB is {blue,green,red} 4-bit nibbles -> RGB888 by nibble replication.
+    if (h_active && v_active) begin
+        vidout_de  <= 1'b1;
         vidout_rgb <= { {2{g_rgb[3:0]}}, {2{g_rgb[7:4]}}, {2{g_rgb[11:8]}} };
-    else
+    end else begin
+        vidout_de  <= 1'b0;
         vidout_rgb <= 24'h0;
+    end
 
     // single-cycle sync pulses on the falling edge of the active-low HVGEN syncs
     vidout_hs <= g_hsyn_d & ~g_hsyn;
