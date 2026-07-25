@@ -19,6 +19,11 @@
                         "id": 2,
                         "name": "Coin",
                         "key": "pad_btn_select"
+                    },
+                    {
+                        "id": 3,
+                        "name": "Pause",
+                        "key": "pad_trig_l"
                     }
                 ]
             }

@@ -1,7 +1,71 @@
 {
     "interact": {
         "magic": "APF_VER_1",
-        "variables": [],
+        "variables": [
+            {
+                "name": "Coinage",
+                "id": 1,
+                "type": "list",
+                "enabled": true,
+                "persist": true,
+                "writeonly": true,
+                "address": "0x10000000",
+                "defaultval": 0,
+                "options": [
+                    { "value": "0x00", "name": "1 Coin / 1 Credit" },
+                    { "value": "0x40", "name": "1 Coin / 2 Credits" },
+                    { "value": "0x80", "name": "2 Coins / 1 Credit" },
+                    { "value": "0xC0", "name": "Free Play" }
+                ]
+            },
+            {
+                "name": "Difficulty",
+                "id": 2,
+                "type": "list",
+                "enabled": true,
+                "persist": true,
+                "writeonly": true,
+                "address": "0x10010000",
+                "defaultval": 2,
+                "options": [
+                    { "value": "0x00", "name": "3 Cars, Hard" },
+                    { "value": "0x18", "name": "3 Cars, Medium" },
+                    { "value": "0x38", "name": "3 Cars, Easy" },
+                    { "value": "0x08", "name": "2 Cars, Hard" },
+                    { "value": "0x20", "name": "2 Cars, Medium" },
+                    { "value": "0x10", "name": "1 Car, Hard" },
+                    { "value": "0x28", "name": "1 Car, Medium" },
+                    { "value": "0x30", "name": "4 Cars, Easy" }
+                ]
+            },
+            {
+                "name": "Bonus Life",
+                "id": 3,
+                "type": "list",
+                "enabled": true,
+                "persist": true,
+                "writeonly": true,
+                "address": "0x10020000",
+                "defaultval": 0,
+                "options": [
+                    { "value": "0x04", "name": "Easy" },
+                    { "value": "0x02", "name": "Medium" },
+                    { "value": "0x00", "name": "Hard" }
+                ]
+            },
+            {
+                "name": "Service Mode",
+                "id": 4,
+                "type": "check",
+                "enabled": true,
+                "persist": false,
+                "writeonly": true,
+                "address": "0x10030000",
+                "defaultval": 0,
+                "value": 1,
+                "value_off": 0
+            }
+        ],
         "messages": []
     }
 }

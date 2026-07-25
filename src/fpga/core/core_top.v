@@ -316,6 +316,9 @@ always @(*) begin
     default: begin
         bridge_rd_data <= 0;
     end
+    32'h10000000: begin
+        bridge_rd_data <= {24'h0, dsw_reg};
+    end
     32'h10xxxxxx: begin
         // example
         // bridge_rd_data <= example_device_data;
@@ -540,8 +543,37 @@ end
     wire reset_n_s;
 synch_3 s_dl (download_done, download_done_s, clk_core_24576);
 synch_3 s_rn (reset_n,       reset_n_s,       clk_core_24576);
+    wire pause_menu_s;
+synch_3 s_pa (osnotify_inmenu, pause_menu_s, clk_core_24576);
+    wire pause_btn_rise;
+synch_3 s_pb (.i(cont1_key[8]), .clk(clk_core_24576), .rise(pause_btn_rise));
+    reg pause_toggle = 1'b0;
+always @(posedge clk_core_24576) if (pause_btn_rise) pause_toggle <= ~pause_toggle;
+    wire pause_s = pause_toggle | pause_menu_s;
     // active-high game reset: held until ROMs are loaded AND host reset released
-    wire game_reset = ~reset_n_s | ~download_done_s;
+    wire game_reset = ~reset_n_s | ~download_done_s | dsw_reset;
+
+    reg  [7:0] dsw_coin  = 8'h00;
+    reg  [7:0] dsw_diff  = 8'h38;
+    reg  [7:0] dsw_bonus = 8'h04;
+    reg  [7:0] dsw_serv  = 8'h00;
+always @(posedge clk_74a) begin
+    if (bridge_wr && bridge_addr == 32'h10000000) dsw_coin  <= bridge_wr_data[7:0];
+    if (bridge_wr && bridge_addr == 32'h10010000) dsw_diff  <= bridge_wr_data[7:0];
+    if (bridge_wr && bridge_addr == 32'h10020000) dsw_bonus <= bridge_wr_data[7:0];
+    if (bridge_wr && bridge_addr == 32'h10030000) dsw_serv  <= bridge_wr_data[7:0];
+end
+    wire [7:0] dsw_reg = dsw_coin | dsw_diff | dsw_bonus | dsw_serv;
+    wire [7:0] dsw_s;
+synch_3 #(.WIDTH(8)) s_dsw (dsw_reg, dsw_s, clk_core_24576);
+    reg  [7:0]  dsw_s_d  = 8'h3C;
+    reg  [15:0] dsw_hold = 16'h0;
+always @(posedge clk_core_24576) begin
+    dsw_s_d <= dsw_s;
+    if (dsw_s != dsw_s_d)          dsw_hold <= 16'hFFFF;
+    else if (dsw_hold != 16'h0)    dsw_hold <= dsw_hold - 16'd1;
+end
+    wire dsw_reset = (dsw_hold != 16'h0);
 
 // ---- controls: cont1_key (active-high) -> CTR1 (active-low) ----
 // CTR bit order (MSB..LSB): {coin, start, up, down, right, left, smoke, unused}
@@ -569,7 +601,7 @@ fpga_NRX game (
 
     .SND         ( rx_snd ),
 
-    .DSW         ( 8'hFF ),   // = MiSTer's ~dips with default dips=0 (active-low switches, all default)
+    .DSW         ( ~dsw_s ),
     .CTR1        ( ctr1 ),
     .CTR2        ( ctr2 ),
 
@@ -580,7 +612,7 @@ fpga_NRX game (
     .ROMDT       ( ioctl_dout ),
     .ROMEN       ( ioctl_wr ),
 
-    .pause       ( 1'b0 ),
+    .pause       ( pause_s ),
 
     .hs_address  ( 16'h0 ),
     .hs_data_in  ( 8'h0 ),
