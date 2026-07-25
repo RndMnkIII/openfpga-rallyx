@@ -39,9 +39,12 @@ performs the assembly and validates every ROM part (byte layout from the
 [MiSTer New Rally-X MRA]).
 
 1. Obtain the `nrallyx.zip` MAME ROM set — you must provide your own.
-2. Assemble the ROM image (PowerShell):
+2. Assemble the ROM image:
    ```powershell
-   pwsh scripts/build_rom.ps1 -Zip path\to\nrallyx.zip
+   pwsh scripts/build_rom.ps1 -Zip path\to\nrallyx.zip   # Windows
+   ```
+   ```bash
+   scripts/build_rom.sh --zip path/to/nrallyx.zip        # Linux / macOS
    ```
    This writes `build/nrallyx.rom` (21,280 bytes).
 3. Copy `build/nrallyx.rom` to your SD card at `/Assets/rallyx/common/nrallyx.rom`.
@@ -89,11 +92,14 @@ investigation; RTL simulation is the next step.
 ## Building
 
 The FPGA project lives in `src/fpga/` (Intel Quartus Prime Lite 21.1, Cyclone V
-`5CEBA4`). Helper scripts (PowerShell):
+`5CEBA4`). Each helper script ships as both a PowerShell (`.ps1`, Windows) and a
+Bash (`.sh`, Linux/macOS) version:
 
-- `scripts/sync.ps1` — clone reference cores into a local `.repos/`
-- `scripts/package.ps1 [-SdRoot E:/] [-Zip]` — bit-reverse the bitstream and
-  assemble the Pocket SD layout (add `-Zip` for a distributable archive)
+- `sync` — clone reference cores into a local `.repos/`
+- `package [--sd-root PATH] [--zip]` — bit-reverse the bitstream and assemble the
+  Pocket SD layout (add `--zip` for a distributable archive)
+
+PowerShell uses `-SdRoot`/`-Zip`; Bash uses `--sd-root`/`--zip`.
 
 ## Game Reference
 
