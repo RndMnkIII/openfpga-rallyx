@@ -4,10 +4,10 @@
         "metadata": {
             "platform_ids": ["rallyx"],
             "shortname": "Rally-X",
-            "description": "Namco Rally-X (1980) arcade core - work in progress.",
+            "description": "Namco Rally-X Compatible Gateware IP Core for FPGA",
             "author": "MorganVieira",
             "url": "https://github.com/morgan-vieira/openfpga-rallyx",
-            "version": "1.4.2",
+            "version": "1.4.3",
             "date_release": "2026-07-25"
         },
         "framework": {
