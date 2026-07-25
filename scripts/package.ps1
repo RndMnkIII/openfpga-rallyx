@@ -50,7 +50,8 @@ Copy-Item (Join-Path $Dist "icon.bin") $CoreDir
 [System.IO.File]::WriteAllBytes((Join-Path $CoreDir "bitstream.rbf_r"), $bytes)
 
 Copy-Item (Join-Path $Dist "platforms/$Platform.json") $PlatDir
-Copy-Item (Join-Path $Dist "platforms/_images/$Platform.bin") $PlatImg
+$PlatBin = Join-Path $Dist "platforms/_images/$Platform.bin"
+if (Test-Path $PlatBin) { Copy-Item $PlatBin $PlatImg }
 
 Write-Ok "Core folder: Cores/$CoreName"
 Write-Ok "Bitstream:   $($bytes.Length) bytes"
