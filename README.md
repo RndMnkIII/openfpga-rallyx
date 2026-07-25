@@ -101,6 +101,18 @@ Bash (`.sh`, Linux/macOS) version:
 
 PowerShell uses `-SdRoot`/`-Zip`; Bash uses `--sd-root`/`--zip`.
 
+## Releases
+
+Pushing a `vMAJOR.MINOR.PATCH` tag runs the
+[release workflow](.github/workflows/release.yml): it compiles the bitstream in a
+Quartus container, packages the SD layout with `package.sh`, and publishes a
+GitHub Release carrying a commit changelog and the distributable `.zip`.
+
+```bash
+git tag v0.2.0
+git push origin v0.2.0
+```
+
 ## Game Reference
 
 Arcade-hardware reference for the `nrallyx` set lives in [docs/game/]: clocks and

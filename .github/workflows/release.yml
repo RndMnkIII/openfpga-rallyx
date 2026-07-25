@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (full history for changelog)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set version from tag
+        id: ver
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          DATE="$(date +'%Y-%m-%d')"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          tmp="$(mktemp)"
+          jq --arg v "$VERSION" --arg d "$DATE" \
+            '.core.metadata.version=$v | .core.metadata.date_release=$d' core.json > "$tmp"
+          mv "$tmp" core.json
+
+      - name: Disable SignalTap for release build
+        run: sed -i -E '/(SIGNALTAP_FILE|SLD_FILE|ENABLE_SIGNALTAP|USE_SIGNALTAP)/d' src/fpga/ap_core.qsf
+
+      - name: Compile bitstream (Quartus in Docker)
+        run: |
+          docker run --rm -v "${{ github.workspace }}:/build" -w /build/src/fpga \
+            raetro/quartus:pocket quartus_sh --flow compile ap_core
+          sudo chown -R "$(id -u):$(id -g)" src/fpga/output_files
+          test -f src/fpga/output_files/ap_core.rbf
+
+      - name: Package SD layout and zip
+        run: bash scripts/package.sh --zip
+
+      - name: Generate changelog
+        run: |
+          PREV="$(git describe --tags --abbrev=0 "${GITHUB_REF_NAME}^" 2>/dev/null || true)"
+          if [ -n "$PREV" ]; then
+            echo "## Changes since ${PREV}" > CHANGELOG.md
+            RANGE="${PREV}..${GITHUB_REF_NAME}"
+          else
+            echo "## Initial release" > CHANGELOG.md
+            RANGE="${GITHUB_REF_NAME}"
+          fi
+          echo "" >> CHANGELOG.md
+          git log --no-merges --pretty='- %s (%h)' "$RANGE" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "### Install" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "Unzip the \`Cores\` and \`Platforms\` folders to the root of your SD card." >> CHANGELOG.md
+          echo "**ROMs are not included** — place your own \`nrallyx.rom\` (21,280 bytes) at \`/Assets/rallyx/common/nrallyx.rom\`." >> CHANGELOG.md
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Rally-X ${{ github.ref_name }}"
+          body_path: CHANGELOG.md
+          files: |
+            *.zip
