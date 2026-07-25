@@ -672,51 +672,48 @@ end
 
 
 //
-// audio i2s silence generator
-// see other examples for actual audio generation
-// (real Rally-X audio is wired in a later step)
+// audio: Namco WSG output (SND, 8-bit unsigned, small 0..108 magnitude) -> APF I2S.
+// Force the sign bit to 0 (unsigned) and left-justify by 7 bits (x128) so the
+// small magnitude fills the 16-bit field and is audible; mono L = R. pocket_i2s
+// (opengateware, APF stock example) re-samples continuously via synch_3 each
+// 48 kHz frame off clk_74a -- no change-detect FIFO. Mirrors the working Dig Dug
+// core (same Namco WSG sound hardware).
 //
-
-assign audio_mclk = audgen_mclk;
-assign audio_dac = audgen_dac;
-assign audio_lrck = audgen_lrck;
-
-// generate MCLK = 12.288mhz with fractional accumulator
-    reg         [21:0]  audgen_accum;
-    reg                 audgen_mclk;
-    parameter   [20:0]  CYCLE_48KHZ = 21'd122880 * 2;
-always @(posedge clk_74a) begin
-    audgen_accum <= audgen_accum + CYCLE_48KHZ;
-    if(audgen_accum >= 21'd742500) begin
-        audgen_mclk <= ~audgen_mclk;
-        audgen_accum <= audgen_accum - 21'd742500 + CYCLE_48KHZ;
+    // Cross the WSG sound from the game clock into the audio (clk_74a) domain.
+    // SND updates at ~96 kHz in clk_core_24576; feeding it straight to pocket_i2s
+    // (which samples the bus asynchronously) caught it mid-transition and folded
+    // into a fixed alias tone. Instead: sample-and-hold at 48 kHz in the game
+    // domain with a toggle flag, then latch the (stable) value into clk_74a on the
+    // synchronized flag edge -- a coherent handshake, no incoherent bus samples.
+    reg  [8:0] snd_div  = 9'd0;     // 24.576 MHz / 512 = 48 kHz
+    reg  [7:0] snd_hold = 8'd0;
+    reg        snd_flag = 1'b0;
+always @(posedge clk_core_24576) begin
+    snd_div <= snd_div + 1'b1;
+    if (snd_div == 9'd0) begin
+        snd_hold <= rx_snd;
+        snd_flag <= ~snd_flag;
     end
 end
 
-// generate SCLK = 3.072mhz by dividing MCLK by 4
-    reg [1:0]   aud_mclk_divider;
-    wire        audgen_sclk = aud_mclk_divider[1] /* synthesis keep*/;
-    reg         audgen_lrck_1;
-always @(posedge audgen_mclk) begin
-    aud_mclk_divider <= aud_mclk_divider + 1'b1;
-end
+    wire       snd_flag_s, snd_flag_rise, snd_flag_fall;
+    reg  [7:0] snd_audio = 8'd0;
+synch_3 s_snd (snd_flag, snd_flag_s, clk_74a, snd_flag_rise, snd_flag_fall);
+always @(posedge clk_74a)
+    if (snd_flag_rise || snd_flag_fall)
+        snd_audio <= snd_hold;
 
-// shift out audio data as I2S
-// 32 total bits per channel, but only 16 active bits at the start and then 16 dummy bits
-//
-    reg     [4:0]   audgen_lrck_cnt;
-    reg             audgen_lrck;
-    reg             audgen_dac;
-always @(negedge audgen_sclk) begin
-    audgen_dac <= 1'b0;
-    // 48khz * 64
-    audgen_lrck_cnt <= audgen_lrck_cnt + 1'b1;
-    if(audgen_lrck_cnt == 31) begin
-        // switch channels
-        audgen_lrck <= ~audgen_lrck;
+    // unsigned WSG magnitude, left-justified x128, sign bit 0, mono L=R
+    wire [15:0] audio_lr = { 1'b0, snd_audio, 7'h0 };
 
-    end
-end
+pocket_i2s audio_i2s (
+    .iCLK_74  ( clk_74a ),
+    .AUDIO_L  ( audio_lr ),
+    .AUDIO_R  ( audio_lr ),
+    .I2S_MCLK ( audio_mclk ),
+    .I2S_DAC  ( audio_dac ),
+    .I2S_LRCK ( audio_lrck )
+);
 
 
 ///////////////////////////////////////////////
