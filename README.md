@@ -49,12 +49,13 @@ performs the assembly and validates every ROM part (byte layout from the
 
 ## Status of Features
 
-- [x] Video (288×224)
-- [x] Controls
-- [x] Audio (Namco 3-channel WSG)
+- [ ] Dip Switches
+  - [x] Change Coinage
+  - [x] Enter Service Mode
+  - [x] Change Score for Bonus Life
+  - [ ] Change Difficulty
 - [x] Pause
-- [x] Dip Switches — mostly working ([see below](#dip-switches))
-- [ ] Hi-Score save
+- [ ] Hi-Score Save
 
 ### Controls
 
@@ -71,14 +72,7 @@ performs the assembly and validates every ROM part (byte layout from the
 Configured from the Pocket's **Core Settings** menu. Changing any switch briefly
 resets the core so the game re-reads it (arcade-authentic behaviour).
 
-| Setting      | Status | Notes                                         |
-| :----------- | :----: | :-------------------------------------------- |
-| Coinage      |   ✅    | 1C/1C, 1C/2C, 2C/1C, Free Play — verified     |
-| Bonus Life   |   ✅    | Easy / Medium / Hard                          |
-| Service Mode |   ✅    | Boots the board's self-test screen — verified |
-| Difficulty   |   🚧    | **Work in progress — see below**              |
-
-#### Difficulty (cars) — work in progress
+#### Change Difficulty — work in progress
 
 The menu exposes all eight New Rally-X difficulty settings (1–4 cars x
 Easy/Medium/Hard) and the setting does affect play, **but the starting car count
