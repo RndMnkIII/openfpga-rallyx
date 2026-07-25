@@ -52,10 +52,9 @@ performs the assembly and validates every ROM part (byte layout from the
 - [x] Video (288×224)
 - [x] Controls
 - [x] Audio (Namco 3-channel WSG)
-- [x] Free Play
-- [ ] Dip Switch menu (difficulty / coinage / cars)
+- [x] Pause
+- [x] Dip Switches — mostly working ([see below](#dip-switches))
 - [ ] Hi-Score save
-- [ ] Pause
 
 ### Controls
 
@@ -63,8 +62,35 @@ performs the assembly and validates every ROM part (byte layout from the
 | :----- | :----------- |
 | D-Pad  | Drive        |
 | A      | Smoke screen |
+| L      | Pause        |
 | Start  | Start        |
 | Select | Coin         |
+
+### Dip Switches
+
+Configured from the Pocket's **Core Settings** menu. Changing any switch briefly
+resets the core so the game re-reads it (arcade-authentic behaviour).
+
+| Setting      | Status | Notes                                         |
+| :----------- | :----: | :-------------------------------------------- |
+| Coinage      |   ✅    | 1C/1C, 1C/2C, 2C/1C, Free Play — verified     |
+| Bonus Life   |   ✅    | Easy / Medium / Hard                          |
+| Service Mode |   ✅    | Boots the board's self-test screen — verified |
+| Difficulty   |   🚧    | **Work in progress — see below**              |
+
+#### Difficulty (cars) — work in progress
+
+The menu exposes all eight New Rally-X difficulty settings (1–4 cars x
+Easy/Medium/Hard) and the setting does affect play, **but the starting car count
+currently only toggles between 3 and 4 cars** instead of covering the full 1–4
+range MAME documents.
+
+This is *not* a menu or wiring fault — the selected DSW value is delivered to the
+game correctly (confirmed by hardwiring the DSW register straight into the core).
+The game logic (byte-identical to the upstream [MiSTer Rally-X core], running a
+CRC-verified `nrallyx` ROM) reads only the low difficulty bit for the car count in
+this build. It appears to be inherited from the MiSTer core and is under
+investigation; RTL simulation is the next step.
 
 ## Building
 
@@ -75,6 +101,12 @@ The FPGA project lives in `src/fpga/` (Intel Quartus Prime Lite 21.1, Cyclone V
 - `scripts/package.ps1 [-SdRoot E:/] [-Zip]` — bit-reverse the bitstream and
   assemble the Pocket SD layout (add `-Zip` for a distributable archive)
 
+## Game Reference
+
+Arcade-hardware reference for the `nrallyx` set lives in [docs/game/]: clocks and
+video/sound parameters, the Z80 memory map and port bits, the ROM table with
+CRC32/SHA1, and both dip switch banks.
+
 ## Credits and acknowledgment
 
 - [MiSTer-X] — Rally-X arcade hardware RTL
@@ -82,6 +114,11 @@ The FPGA project lives in `src/fpga/` (Intel Quartus Prime Lite 21.1, Cyclone V
 - [Adam Gastineau] — APF Data Loader
 - [Analogue] — openFPGA / APF framework and core template
 - [opengateware] — `pocket_i2s` audio serializer (from their Dig Dug core)
+- [Arcade Repair DB] — New Rally-X memory map, ROM and dip switch reference data
+  (contributed by Arcadenut and AzureOz)
+- [International Arcade Museum] — Rally-X dip switch settings reference
+- [Nicola Salmoria] — MAME `rallyx.cpp` driver, the source of the hardware
+  documentation under `docs/game/`
 
 ## Powered by Open-Source Software
 
@@ -121,3 +158,7 @@ Namco Entertainment Inc.
 [Analogue]: https://www.analogue.co/developer
 [opengateware]: https://github.com/opengateware
 [Daniel Wallner]: https://opencores.org/projects/t80
+[International Arcade Museum]: https://www.arcade-museum.com/tech-center/game-dips/rallyxa
+[Arcade Repair DB]: https://www.arcaderepairdb.com/game/version/New-Rally-X/New-Rally-X
+[Nicola Salmoria]: https://github.com/mamedev/mame/blob/master/src/mame/namco/rallyx.cpp
+[docs/game/]: docs/game/
