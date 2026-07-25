@@ -77,19 +77,21 @@ The FPGA project lives in `src/fpga/` (Intel Quartus Prime Lite 21.1, Cyclone V
 
 ## Credits and acknowledgment
 
-- [MiSTer-X] — Rally-X arcade RTL
-- [Adam Gastineau] — APF Data Loader
-- [opengateware] — `pocket_i2s` serializer and APF references
+- [MiSTer-X] — Rally-X arcade hardware RTL
 - [Daniel Wallner] — T80 Z80 CPU core
+- [Adam Gastineau] — APF Data Loader
+- [Analogue] — openFPGA / APF framework and core template
+- [opengateware] — `pocket_i2s` audio serializer (from their Dig Dug core)
 
 ## Powered by Open-Source Software
 
-| Module        | Copyright / Developer   |
-| :------------ | :---------------------- |
-| [Rally-X RTL] | 2005 (c) MiSTer-X       |
-| [Data Loader] | 2022 (c) Adam Gastineau |
-| [pocket_i2s]  | (c) opengateware        |
-| [T80]         | 2001 (c) Daniel Wallner |
+| Module            | Author                                         |
+| :---------------- | :--------------------------------------------- |
+| [Rally-X RTL]     | 2005 (c) MiSTer-X                              |
+| [T80]             | 2001 (c) Daniel Wallner                        |
+| [Data Loader]     | 2022 (c) Adam Gastineau (MIT)                  |
+| [pocket_i2s]      | Analogue APF example, packaged by opengateware |
+| APF core template | (c) Analogue                                   |
 
 ## Legal Notices
 
@@ -110,5 +112,6 @@ Namco Entertainment Inc.
 [release]: https://github.com/morgan-vieira/openfpga-rallyx/releases
 [MiSTer-X]: https://github.com/MrX-8B
 [Adam Gastineau]: https://github.com/agg23
+[Analogue]: https://www.analogue.co/developer
 [opengateware]: https://github.com/opengateware
 [Daniel Wallner]: https://opencores.org/projects/t80
