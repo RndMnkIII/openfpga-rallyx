@@ -1,6 +1,19 @@
 {
     "data": {
         "magic": "APF_VER_1",
-        "data_slots": []
+        "data_slots": [
+            {
+                "name": "Rally-X ROM",
+                "id": 0,
+                "required": true,
+                "parameters": 1,
+                "filename": "nrallyx.rom",
+                "extensions": [
+                    "rom"
+                ],
+                "size_exact": 21280,
+                "address": "0x00000000"
+            }
+        ]
     }
 }

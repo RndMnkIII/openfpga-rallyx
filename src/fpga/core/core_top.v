@@ -569,7 +569,7 @@ fpga_NRX game (
 
     .SND         ( rx_snd ),
 
-    .DSW         ( 8'h00 ),
+    .DSW         ( 8'hFF ),   // = MiSTer's ~dips with default dips=0 (active-low switches, all default)
     .CTR1        ( ctr1 ),
     .CTR2        ( ctr2 ),
 
