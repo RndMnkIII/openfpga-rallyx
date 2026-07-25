@@ -6,9 +6,9 @@
             "shortname": "Rally-X",
             "description": "Namco Rally-X (1980) arcade core - work in progress.",
             "author": "MorganVieira",
-            "url": "https://github.com/morgan-vieira/claude-openfpga-rallyx",
-            "version": "0.1.0",
-            "date_release": "2026-07-24"
+            "url": "https://github.com/morgan-vieira/openfpga-rallyx",
+            "version": "1.4.1",
+            "date_release": "2026-07-25"
         },
         "framework": {
             "target_product": "Analogue Pocket",
