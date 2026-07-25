@@ -1,4 +1,4 @@
-## openFPGA-RallyX
+# openFPGA-RallyX
 
 An openFPGA port of the **New Rally-X** arcade hardware for the Analogue Pocket,
 based on the [MiSTer Rally-X core] by [MiSTer-X].
