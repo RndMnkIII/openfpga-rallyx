@@ -52,6 +52,3 @@ c5_pin_model_dump.txt
 # Assembled ROM blobs (copyrighted - never commit)
 build/
 *.rom
-
-# ROM assembly recipe - keep local, do not distribute (copyright hygiene)
-scripts/build_rom.ps1

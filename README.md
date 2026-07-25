@@ -1,10 +1,3 @@
-# Rally-X for Analogue Pocket
-
-[![Maintenance](https://img.shields.io/badge/Maintenance%20Level-Actively%20Developed-brightgreen.svg)](#status-of-features)
-[![license](https://img.shields.io/github/license/morgan-vieira/openfpga-rallyx.svg?label=License&color=yellow)](#legal-notices)
-[![issues](https://img.shields.io/github/issues/morgan-vieira/openfpga-rallyx.svg?label=Issues&color=red)](https://github.com/morgan-vieira/openfpga-rallyx/issues)
-[![stars](https://img.shields.io/github/stars/morgan-vieira/openfpga-rallyx.svg?label=Project%20Stars)](https://github.com/morgan-vieira/openfpga-rallyx/stargazers)
-
 ## Namco [Rally-X] Compatible Gateware IP Core
 
 An openFPGA port of the **New Rally-X** arcade hardware for the Analogue Pocket,
@@ -36,17 +29,23 @@ chasers, and rocks block the way.
 
 | **Game**              | Region | Status |
 | :-------------------- | :----: | :----: |
-| New Rally-X (nrallyx) |  JPN   |   ✅   |
+| New Rally-X (nrallyx) |  JPN   |   ✅    |
 
 ### ROM Instructions
 
 This core loads a single **`nrallyx.rom`** image (**21,280 bytes**) assembled from
-your legally-owned **New Rally-X** (`nrallyx`) MAME ROM set, following the byte
-layout in the [MiSTer New Rally-X MRA].
+your legally-owned **New Rally-X** (`nrallyx`) MAME ROM set. `scripts/build_rom.ps1`
+performs the assembly and validates every ROM part (byte layout from the
+[MiSTer New Rally-X MRA]).
 
-1. Assemble `nrallyx.rom` from your own ROM set.
-2. Copy it to your SD card at: `/Assets/rallyx/common/nrallyx.rom`
-3. Copy the `Cores` and `Platforms` folders from a [release] to the root of your SD card.
+1. Obtain the `nrallyx.zip` MAME ROM set — you must provide your own.
+2. Assemble the ROM image (PowerShell):
+   ```powershell
+   pwsh scripts/build_rom.ps1 -Zip path\to\nrallyx.zip
+   ```
+   This writes `build/nrallyx.rom` (21,280 bytes).
+3. Copy `build/nrallyx.rom` to your SD card at `/Assets/rallyx/common/nrallyx.rom`.
+4. Copy the `Cores` and `Platforms` folders from a [release] to the root of your SD card.
 
 ## Status of Features
 
@@ -85,12 +84,12 @@ The FPGA project lives in `src/fpga/` (Intel Quartus Prime Lite 21.1, Cyclone V
 
 ## Powered by Open-Source Software
 
-| Module        | Copyright / Developer      |
-| :------------ | :------------------------- |
-| [Rally-X RTL] | 2005 (c) MiSTer-X          |
-| [Data Loader] | 2022 (c) Adam Gastineau    |
-| [pocket_i2s]  | (c) opengateware           |
-| [T80]         | 2001 (c) Daniel Wallner    |
+| Module        | Copyright / Developer   |
+| :------------ | :---------------------- |
+| [Rally-X RTL] | 2005 (c) MiSTer-X       |
+| [Data Loader] | 2022 (c) Adam Gastineau |
+| [pocket_i2s]  | (c) opengateware        |
+| [T80]         | 2001 (c) Daniel Wallner |
 
 ## Legal Notices
 
