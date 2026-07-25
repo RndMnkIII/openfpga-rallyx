@@ -7,7 +7,7 @@
             "description": "Namco Rally-X (1980) arcade core - work in progress.",
             "author": "MorganVieira",
             "url": "https://github.com/morgan-vieira/openfpga-rallyx",
-            "version": "1.4.1",
+            "version": "1.4.2",
             "date_release": "2026-07-25"
         },
         "framework": {
