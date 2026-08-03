@@ -1,6 +1,6 @@
 # New Rally-X ROM Set (`nrallyx`)
 
-Reference data for the MAME `nrallyx` set and how `scripts/build_rom.ps1` folds it
+Reference data for the MAME `nrallyx` set and how `tools/build_rom.py` folds it
 into the single `nrallyx.rom` image the core loads.
 
 ## ROM parts
@@ -51,7 +51,7 @@ Each file is 4096 bytes and is split in half by MAME's `ROM_CONTINUE`: the low
 
 ## Assembled core image
 
-`scripts/build_rom.ps1` concatenates 14 slices into a flat **21,280-byte**
+`tools/build_rom.py` concatenates 14 slices into a flat **21,280-byte**
 `nrallyx.rom`, in the order taken from the MiSTer `New Rally-X.mra`. The four
 program ROMs are sliced into 2 KiB halves so the first 16 KiB of the image is
 already in Z80 address order — no `ROM_CONTINUE` fixup is needed in the core.

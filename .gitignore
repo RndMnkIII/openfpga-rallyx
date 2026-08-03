@@ -40,13 +40,17 @@ build_id.mif
 PLLJ_PLLSPE_INFO.txt
 c5_pin_model_dump.txt
 
+# Python bytecode (tools/)
+__pycache__/
+*.py[cod]
+
 # Editor / patch junk
 *.bak
 *.orig
 *.rej
 *~
 
-# Release archives (built by package.ps1 -Zip)
+# Release archives (built by tools/package.py --zip)
 *.zip
 
 # Assembled ROM blobs (copyrighted - never commit)

@@ -40,9 +40,9 @@ reference material for coding agents.
 - Do not build from `.repos/`; the Quartus project under `src/fpga/` must only
   reference RTL that lives under `src/`. Copy any needed reference RTL into
   `src/` rather than pointing the project at `.repos/`.
-- Repos are declared in the `$ReferenceRepos` array in `scripts/sync.ps1` —
-  edit that array to add or remove vendored repos.
-- Sync with `pwsh scripts/sync.ps1` (all repos) or
-  `pwsh scripts/sync.ps1 -Repo <name>` (one repo). Add `-DryRun` to print the
+- Repos are declared in the `REFERENCE_REPOS` tuple in `tools/sync.py` — edit
+  that tuple to add or remove vendored repos.
+- Sync with `python tools/sync.py` (all repos) or
+  `python tools/sync.py --repo <name>` (one repo). Add `--dry-run` to print the
   planned git commands without executing them. Each repo tracks its default
   branch (no version pinning).

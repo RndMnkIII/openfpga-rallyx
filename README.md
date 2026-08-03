@@ -34,17 +34,17 @@ chasers, and rocks block the way.
 ### ROM Instructions
 
 This core loads a single **`nrallyx.rom`** image (**21,280 bytes**) assembled from
-your legally-owned **New Rally-X** (`nrallyx`) MAME ROM set. `scripts/build_rom.ps1`
+your legally-owned **New Rally-X** (`nrallyx`) MAME ROM set. `tools/build_rom.py`
 performs the assembly and validates every ROM part (byte layout from the
 [MiSTer New Rally-X MRA]).
 
 1. Obtain the `nrallyx.zip` MAME ROM set — you must provide your own.
 2. Assemble the ROM image:
    ```powershell
-   pwsh scripts/build_rom.ps1 -Zip path\to\nrallyx.zip   # Windows
+   python tools/build_rom.py --zip path\to\nrallyx.zip    # Windows
    ```
    ```bash
-   scripts/build_rom.sh --zip path/to/nrallyx.zip        # Linux / macOS
+   python3 tools/build_rom.py --zip path/to/nrallyx.zip   # Linux / macOS
    ```
    This writes `build/nrallyx.rom` (21,280 bytes).
 3. Copy `build/nrallyx.rom` to your SD card at `/Assets/rallyx/common/nrallyx.rom`.
@@ -92,20 +92,23 @@ investigation; RTL simulation is the next step.
 ## Building
 
 The FPGA project lives in `src/fpga/` (Intel Quartus Prime Lite 21.1, Cyclone V
-`5CEBA4`). Each helper script ships as both a PowerShell (`.ps1`, Windows) and a
-Bash (`.sh`, Linux/macOS) version:
+`5CEBA4`). The helper scripts in `tools/` are Python 3 (standard library only) and
+run the same way on every platform — `python` on Windows, `python3` elsewhere:
 
-- `sync` — clone reference cores into a local `.repos/`
-- `package [--sd-root PATH] [--zip]` — bit-reverse the bitstream and assemble the
-  Pocket SD layout (add `--zip` for a distributable archive)
+- `tools/sync.py [--repo NAME] [--dry-run]` — clone reference cores into a local
+  `.repos/`
+- `tools/package.py [--sd-root PATH] [--zip]` — bit-reverse the bitstream and
+  assemble the Pocket SD layout (add `--zip` for a distributable archive)
+- `tools/build_rom.py [--zip PATH] [--out PATH]` — assemble `nrallyx.rom` from a
+  MAME ROM set
 
-PowerShell uses `-SdRoot`/`-Zip`; Bash uses `--sd-root`/`--zip`.
+Every script takes `--help`.
 
 ## Releases
 
 Pushing a `vMAJOR.MINOR.PATCH` tag runs the
 [release workflow](.github/workflows/release.yml): it compiles the bitstream in a
-Quartus container, packages the SD layout with `package.sh`, and publishes a
+Quartus container, packages the SD layout with `tools/package.py`, and publishes a
 GitHub Release carrying a commit changelog and the distributable `.zip`.
 
 ```bash

@@ -39,7 +39,7 @@ jobs:
           test -f src/fpga/output_files/ap_core.rbf
 
       - name: Package SD layout and zip
-        run: bash scripts/package.sh --zip
+        run: python3 tools/package.py --zip
 
       - name: Generate changelog
         run: |
