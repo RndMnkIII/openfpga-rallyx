@@ -39,7 +39,7 @@ The same road, walked backwards, is how we diagnose. When a user reports a game 
 - `src/fpga/rtl/cpu/` - the T80 Z80 core, third-party VHDL. A black box with a datasheet.
 - `*.json` and `info.txt` at the repo root - the Pocket core definition files. Menu entries, dip switches, video modes, and ROM slots are declared here, not in RTL. `docs/analogue/core-definition-files/` is the spec.
 - `dist/` - the hand-authored half of the SD payload: core icon and platform art. `tools/package.py` merges it with the compiled bitstream into `release/`.
-- `tools/` - Python 3, one job per script: `sync.py` (fetch reference cores), `build_rom.py` (assemble `nrallyx.rom` from a MAME set), `package.py` (bit-reverse the bitstream, lay out the SD card), `make_pocket_image.py` (art to Pocket `.bin`). Standard library only, except `make_pocket_image.py`, which wants numpy and Pillow. Shared helpers in `_common.py`.
+- `tools/` - Python 3, one job per script: `sync.py` (fetch reference cores), `build_rom.py` (assemble `rallyx.rom` or `nrallyx.rom` from a MAME set), `package.py` (bit-reverse the bitstream, lay out the SD card), `make_pocket_image.py` (art to Pocket `.bin`). Standard library only, except `make_pocket_image.py`, which wants numpy and Pillow. Shared helpers in `_common.py`.
 - `docs/analogue/` - Analogue's openFPGA documentation, mirrored. The authority on APF, the bridge, and chip32.
 - `docs/game/` - the `nrallyx` hardware reference: memory map, port bits, ROM table with checksums, both dip switch banks. Check it before believing what the RTL seems to do.
 - `.repos/` - vendored read-only references. Prefer their patterns over invented ones. Never edit or import from them. Sync with `python tools/sync.py`.

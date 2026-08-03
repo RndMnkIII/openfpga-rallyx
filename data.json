@@ -3,11 +3,10 @@
         "magic": "APF_VER_1",
         "data_slots": [
             {
-                "name": "Rally-X ROM",
+                "name": "Game ROM",
                 "id": 0,
                 "required": true,
-                "parameters": 1,
-                "filename": "nrallyx.rom",
+                "parameters": "0x281",
                 "extensions": [
                     "rom"
                 ],
