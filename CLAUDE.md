@@ -1,48 +1,45 @@
-# CLAUDE.md
+# openFPGA-RallyX
 
-## Task Completion Requirements
+A Rally-X core for the Analogue Pocket.
 
-- Any change under `src/fpga/` (`.v`, `.sv`, `.vhd`, `.qsf`, `.qpf`, `.sdc`) must
-  compile before the task is considered done. Run the smallest relevant check;
-  Quartus 21.1 is installed but not on `PATH`
-  (`/c/intelFPGA_lite/21.1/quartus/bin64/`).
-  - Fast syntax/elaboration pass for most edits: run `quartus_map ap_core` from
-    `src/fpga/`, then confirm `output_files/ap_core.map.rpt` reports 0 errors and
-    that Analysis & Synthesis succeeded.
-  - Full compile (fit + timing), required before packaging or cutting a release:
-    run `quartus_sh --flow compile ap_core` from `src/fpga/`, then confirm 0
-    errors and met timing across `output_files/ap_core.*.rpt`.
-- Any changed core definition JSON (`core.json`, `interact.json`, `input.json`,
-  `data.json`, `video.json`, `audio.json`, `variants.json`) must parse cleanly
-  before completion.
-- A clean compile is not proof the change works on hardware. State plainly what
-  was compiled versus what still needs an on-device boot check by the user; do
-  not claim a hardware-facing feature works from synthesis alone.
+## A note from morgan-vieira
 
-## Code Style
+I like ambitious ideas, simple systems, and software that feels obvious. Do not preserve complexity just because it already exists. Do not introduce machinery because it looks architecturally impressive. Understand the real constraint, then fight for the smallest model that makes the correct behavior unsurprising.
 
-- Generated code contains no comments — no docstrings, no inline or block
-  comments, in any language. Explanations belong in the chat reply or commit
-  message, not the source. Leave pre-existing comments in files you edit alone.
+Channel both "measure twice, cut once" and "yagni". Fight scope creep. Try to honor the dev's intent in both a minimal and realistic fashion.
 
-## Core Priorities
+The rest of this document is meant to help you navigate the codebase and make changes effectively. Think of these instructions less as "hard rules", more as "good defaults". The developer's preferences should be able to override anything here.
 
-If a tradeoff is required, choose correctness and robustness over short-term convenience.
+## A small glossary
 
-## Vendored Repositories
+We need to be on the same page with terminology. When communicating, use this language:
 
-This project vendors external repositories under `.repos/` as read-only
-reference material for coding agents.
+- **you** means the agent reading this file and helping build the core.
+- **we, us, and maintainers** mean morgan-vieira and the people building this core. These are who you are talking to now.
+- **user** means the person using this core to play Rally-X on an Analogue Pocket.
+- **modules** mean the individual Verilog/SystemVerilog building blocks that make up the core.
 
-- Prefer examples and patterns from the vendored source code over generated
-  guesses or web search results.
-- Do not edit files under `.repos/` unless explicitly asked.
-- Do not build from `.repos/`; the Quartus project under `src/fpga/` must only
-  reference RTL that lives under `src/`. Copy any needed reference RTL into
-  `src/` rather than pointing the project at `.repos/`.
-- Repos are declared in the `REFERENCE_REPOS` tuple in `tools/sync.py` — edit
-  that tuple to add or remove vendored repos.
-- Sync with `python tools/sync.py` (all repos) or
-  `python tools/sync.py --repo <name>` (one repo). Add `--dry-run` to print the
-  planned git commands without executing them. Each repo tracks its default
-  branch (no version pinning).
+## The slow route
+
+Modules are where this core gets built, and modules are where we refuse to rush. A module that compiles is not a module that works, and a simulation that passes is not a Pocket that boots. Every module takes the slow route, in order, every time:
+
+1. **Prove it in simulation first.** Write a testbench and run it under Icarus Verilog before the module goes anywhere near Quartus. Exercise the ports, the edge cases, and the timing you are least sure about. Synthesis checks that a module is legal, not that it is right.
+2. **Build the ROM that proves it.** Every module gets its own test ROM, built for that module's specific requirement — the video timing module gets a ROM that stresses sync and refresh, the VSU gets a ROM that plays known tones. A commercial game exercises everything at once and proves nothing in particular.
+3. **Name the ROM.** When you hand a module over for testing, say exactly which ROM to load and exactly what a pass looks like on the Pocket — what should show on screen, what should come out of the speaker, and what a failure looks like instead. "Load something and see" is not an instruction.
+4. **Ask for the hardware test, always.** You cannot see the Pocket's screen. Only the real bitstream on real hardware counts, and only a maintainer can watch it run. Ask for the test, wait for the verdict, and treat a clean simulation as a status update, not a conclusion. No module is done until a maintainer has watched it behave on the Pocket.
+
+The same road, walked backwards, is how we diagnose. When a user reports a game misbehaving, resist the urge to patch the core and re-test the whole game. Isolate the symptom to a module, build or pick the test ROM that reproduces just that behavior, prove the fix in simulation, and ask for hardware again. A bug you can only reproduce inside a commercial game is a bug you have not yet found.
+
+## Where code lives
+
+- `src/fpga/` - the Quartus project (Quartus Prime Lite 21.1, Cyclone V `5CEBA4`). `ap_core.qsf` is the source manifest: a module that is not listed there is not in the build, no matter where the file sits.
+- `src/fpga/apf/` - Analogue's APF framework and the real top level, `apf_top`. Vendor code, and the one part every Pocket core shares. Don't touch it.
+- `src/fpga/core/` - our glue between APF and the game: `core_top.v` (the module APF instantiates), `core_bridge_cmd.v` for the host bridge, `data_loader.sv` for ROM download, `pocket_i2s.v` for audio, `mf_pllbase` for clocks. Pocket-side work belongs here.
+- `src/fpga/rtl/` - the Rally-X arcade hardware, inherited from the MiSTer core. `fpga_nrx.v` on top, then video, sprite, sound, bang, rams, linebuf, hvgen. Keep it as close to upstream as the port allows; drift here is how the game stops being the game.
+- `src/fpga/rtl/cpu/` - the T80 Z80 core, third-party VHDL. A black box with a datasheet.
+- `*.json` and `info.txt` at the repo root - the Pocket core definition files. Menu entries, dip switches, video modes, and ROM slots are declared here, not in RTL. `docs/analogue/core-definition-files/` is the spec.
+- `dist/` - the hand-authored half of the SD payload: core icon and platform art. `tools/package.py` merges it with the compiled bitstream into `release/`.
+- `tools/` - Python 3, one job per script: `sync.py` (fetch reference cores), `build_rom.py` (assemble `nrallyx.rom` from a MAME set), `package.py` (bit-reverse the bitstream, lay out the SD card), `make_pocket_image.py` (art to Pocket `.bin`). Standard library only, except `make_pocket_image.py`, which wants numpy and Pillow. Shared helpers in `_common.py`.
+- `docs/analogue/` - Analogue's openFPGA documentation, mirrored. The authority on APF, the bridge, and chip32.
+- `docs/game/` - the `nrallyx` hardware reference: memory map, port bits, ROM table with checksums, both dip switch banks. Check it before believing what the RTL seems to do.
+- `.repos/` - vendored read-only references. Prefer their patterns over invented ones. Never edit or import from them. Sync with `python tools/sync.py`.
