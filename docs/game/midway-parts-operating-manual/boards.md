@@ -33,13 +33,13 @@ input and both video and audio outputs land on Board I.
 
 ## The boards, by part number
 
-| Part number       | Board                  | Notes                                                       |
-| ----------------- | ---------------------- | ----------------------------------------------------------- |
+| Part number       | Board                  | Notes                                                                |
+| ----------------- | ---------------------- | -------------------------------------------------------------------- |
 | `A082-91385-C000` | Game Logic Board I     | Switches, volume pot, char ROM, cabinet connector. `M051-00935-C023` |
-| `A082-91387-C000` | Game Logic Board II    | Program ROM, RAM, NVC293. `M501-00935-C024`                 |
-| `A084-90414-C935` | Power supply           | See [power.md](power.md)                                    |
-| `A082-91109-A000` | Credit Bypass P.C.     | In all three cabinets                                       |
-| `A082-91348-C000` | Credit Multiplier P.C. | Optional. Title block says "USED ON PAC-MAN"                |
+| `A082-91387-C000` | Game Logic Board II    | Program ROM, RAM, NVC293. `M501-00935-C024`                          |
+| `A084-90414-C935` | Power supply           | See [power.md](power.md)                                             |
+| `A082-91109-A000` | Credit Bypass P.C.     | In all three cabinets                                                |
+| `A082-91348-C000` | Credit Multiplier P.C. | Optional. Title block says "USED ON PAC-MAN"                         |
 
 > [!NOTE]
 > The two logic schematic numbers differ in their prefix as drawn — Board I's
@@ -142,21 +142,21 @@ is. It lists types, not positions or quantities.
 `74LS174`, `74LS194`, `74LS259`, `74LS273`, `74LS367`, `74LS377`, `4006`,
 `4066`, `4070`, `4099`, plus:
 
-| Part              | Function as printed          |
-| ----------------- | ---------------------------- |
-| `NVC293`          | Custom video shifter         |
-| `A082-91388-A000` | Video shifter P.C.           |
-| `9332`            | 4K x 8 Rom                   |
-| `2532`            | 4K x 8 Eprom                 |
-| `IM5623`          | 256 x 4 Prom                 |
-| `7603`            | 32 x 8 Prom - tri-state      |
-| `MBM2147`         | 1K x 1 Ram                   |
-| `93415`           | 1K x 1 Ram                   |
-| `82S25`           | 16 x 4 Ram                   |
-| `741`             | Operational amplifier        |
-| `MB3730`          | Audio amplifier              |
-| `2N3391`, `D40K1` | NPN transistor               |
-| `IN914`           | Diode                        |
+| Part              | Function as printed     |
+| ----------------- | ----------------------- |
+| `NVC293`          | Custom video shifter    |
+| `A082-91388-A000` | Video shifter P.C.      |
+| `9332`            | 4K x 8 Rom              |
+| `2532`            | 4K x 8 Eprom            |
+| `IM5623`          | 256 x 4 Prom            |
+| `7603`            | 32 x 8 Prom - tri-state |
+| `MBM2147`         | 1K x 1 Ram              |
+| `93415`           | 1K x 1 Ram              |
+| `82S25`           | 16 x 4 Ram              |
+| `741`             | Operational amplifier   |
+| `MB3730`          | Audio amplifier         |
+| `2N3391`, `D40K1` | NPN transistor          |
+| `IN914`           | Diode                   |
 
 **Logic Board II** — `74LS00`, `74LS04`, `74LS08`, `74LS20`, `74LS32`, `74LS74`,
 `74LS86`, `74S89`, `74LS107`, `74LS138`, `74LS139`, `74LS157`, `74LS158`,
@@ -215,15 +215,15 @@ the CMOS analogue parts; Board II has the `74LS245` transceiver and the
 Board I is the larger of the two. Read off drawing `M051-00935-C023` at the
 resolution the scan supports:
 
-| Group                | Positions              | Devices                              |
-| -------------------- | ---------------------- | ------------------------------------ |
-| Graphics ROM         | `8A`–`8E`              | `2716`, with `8A` a `2364` and `8E` annotated `(2332)` |
-| Fast static RAM      | `9B`–`9E`, `10B`–`10E` | `MBM2147H` and `93415`, marked `1K x 4` |
-| Colour PROMs         | near `7K`, `9H`        | `7603`, labelled `RXI-1` and `RXI-7` |
-| Main latch           | `12M`                  | `259`, outputs include `FLIP`, `INT ON`, `SOUND ON`, `BANG` |
-| Coin logic           | `11M`, `12L`           | `4099`, `9N`                          |
-| Audio output         | `1N`, `11D`, `11A/11C` | `4066` analogue switches, `MB3730` amplifier |
-| Cabinet connector    | right edge             | 44-pin, see [cabinet-io.md](cabinet-io.md) |
+| Group             | Positions              | Devices                                                     |
+| ----------------- | ---------------------- | ----------------------------------------------------------- |
+| Graphics ROM      | `8A`–`8E`              | `2716`, with `8A` a `2364` and `8E` annotated `(2332)`      |
+| Fast static RAM   | `9B`–`9E`, `10B`–`10E` | `MBM2147H` and `93415`, marked `1K x 4`                     |
+| Colour PROMs      | near `7K`, `9H`        | `7603`, labelled `RXI-1` and `RXI-7`                        |
+| Main latch        | `12M`                  | `259`, outputs include `FLIP`, `INT ON`, `SOUND ON`, `BANG` |
+| Coin logic        | `11M`, `12L`           | `4099`, `9N`                                                |
+| Audio output      | `1N`, `11D`, `11A/11C` | `4066` analogue switches, `MB3730` amplifier                |
+| Cabinet connector | right edge             | 44-pin, see [cabinet-io.md](cabinet-io.md)                  |
 
 Two things are worth separating out because the manual's own text contradicts or
 omits them.

@@ -75,22 +75,22 @@ switch, when pressed, plays one specific sound. This is a genuinely useful table
 — it is a list of every distinct sound the game can make, each addressable by a
 single button press.
 
-| Switch                | Sound produced                              |
-| --------------------- | ------------------------------------------- |
-| Coin sw 1, 2          | sound made when coin is deposited           |
-| Service sw            | service sound                               |
-| 1 player start        | start music                                 |
-| 2 players start       | music played before challenging stage       |
-| P1 control up         | fuel warning                                |
-| P1 control down       | sound made when fuel added to score         |
-| P1 control right      | sound made when special check pt cleared    |
-| P1 control left       | sound made when check pt cleared            |
-| P1 smoke screen       | sound made when bonus car received          |
-| P2 control up \*      | sound made when one full pattern is cleared |
-| P2 control down \*    | BGM                                         |
-| P2 control right \*   | crash noise                                 |
-| P2 control left \*    | high score noise                            |
-| P2 smoke screen \*    | sound of car running                        |
+| Switch              | Sound produced                              |
+| ------------------- | ------------------------------------------- |
+| Coin sw 1, 2        | sound made when coin is deposited           |
+| Service sw          | service sound                               |
+| 1 player start      | start music                                 |
+| 2 players start     | music played before challenging stage       |
+| P1 control up       | fuel warning                                |
+| P1 control down     | sound made when fuel added to score         |
+| P1 control right    | sound made when special check pt cleared    |
+| P1 control left     | sound made when check pt cleared            |
+| P1 smoke screen     | sound made when bonus car received          |
+| P2 control up \*    | sound made when one full pattern is cleared |
+| P2 control down \*  | BGM                                         |
+| P2 control right \* | crash noise                                 |
+| P2 control left \*  | high score noise                            |
+| P2 smoke screen \*  | sound of car running                        |
 
 \* Applies only to the table model. On an upright the Player 2 inputs are not
 wired — see [cabinet-io.md](cabinet-io.md) — so five of the fourteen sounds are

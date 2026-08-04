@@ -11,19 +11,19 @@ audio and coin circuits run on their own supplies well above it.
 
 The supply presents its outputs on a 19-position connector:
 
-| Pin(s)      | Rail          | Rating                    |
-| ----------- | ------------- | ------------------------- |
-| 17, 18, 19  | +5V           | 5A max, fused at 7A (F3)  |
-| 4           | +5V           |                           |
-| 9           | – Sense       | remote sense return       |
-| 5–10, 13–14, 15–16 | COM    | common                    |
-| 8           | +72V          | 2A max                    |
-| 7           | +72V          | coin meters               |
-| 3           | +V IND        | ≈10V RMS at 3.5A          |
-| 1           | +V Audio      | ≈13V at 1.5A              |
-| 12          | – V Audio     |                           |
-| 11          | – V IND       |                           |
-| 6           | KEY           | key slot, not a rail      |
+| Pin(s)             | Rail      | Rating                   |
+| ------------------ | --------- | ------------------------ |
+| 17, 18, 19         | +5V       | 5A max, fused at 7A (F3) |
+| 4                  | +5V       |                          |
+| 9                  | – Sense   | remote sense return      |
+| 5–10, 13–14, 15–16 | COM       | common                   |
+| 8                  | +72V      | 2A max                   |
+| 7                  | +72V      | coin meters              |
+| 3                  | +V IND    | ≈10V RMS at 3.5A         |
+| 1                  | +V Audio  | ≈13V at 1.5A             |
+| 12                 | – V Audio |                          |
+| 11                 | – V IND   |                          |
+| 6                  | KEY       | key slot, not a rail     |
 
 The `– Sense` line on pin 9 is why pin `T` exists on the cabinet edge connector
 (see [cabinet-io.md](cabinet-io.md)) — the regulator senses its ground reference
@@ -34,12 +34,12 @@ pull the logic rail down.
 
 Three separate regulators, not one:
 
-| Device            | Position | Role                                    |
-| ----------------- | -------- | --------------------------------------- |
-| SG3532            | IC80     | Switching regulator controller, +5V     |
-| 2N3055            | Q2       | Pass transistor for the +5V switcher    |
-| LM317             | Q1       | Adjustable linear regulator             |
-| TIP31 (or MT87/91)| Q3       | Display lights                          |
+| Device             | Position | Role                                 |
+| ------------------ | -------- | ------------------------------------ |
+| SG3532             | IC80     | Switching regulator controller, +5V  |
+| 2N3055             | Q2       | Pass transistor for the +5V switcher |
+| LM317              | Q1       | Adjustable linear regulator          |
+| TIP31 (or MT87/91) | Q3       | Display lights                       |
 
 The +5V logic rail is switched, not linear — an SG3532 controller driving a
 2N3055 through a ferrite bead, with a 20,000 µF bulk capacitor on the input side
@@ -66,11 +66,11 @@ cabinets:
 Power switch location differs by cabinet, which is worth knowing before hunting
 for it:
 
-| Cabinet   | Power switch location    |
-| --------- | ------------------------ |
-| Upright   | Top of the cabinet       |
-| Mini      | Back of the cabinet      |
-| Cocktail  | Bottom of the cabinet    |
+| Cabinet  | Power switch location |
+| -------- | --------------------- |
+| Upright  | Top of the cabinet    |
+| Mini     | Back of the cabinet   |
+| Cocktail | Bottom of the cabinet |
 
 This is separate from the line voltage safety switch, which is documented in
 [cabinet-io.md](cabinet-io.md).

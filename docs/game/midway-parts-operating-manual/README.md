@@ -29,8 +29,8 @@ The manual covers three cabinets built around one board set:
 
 ## Contents
 
-| Page                               | Contents                                                                |
-| ---------------------------------- | ----------------------------------------------------------------------- |
+| Page                               | Contents                                                                 |
+| ---------------------------------- | ------------------------------------------------------------------------ |
 | [boards.md](boards.md)             | The two-board logic set, ROM/RAM socket map, inter-board connector       |
 | [cabinet-io.md](cabinet-io.md)     | 44-pin edge connector, controls, video, audio, coin and credit path      |
 | [diagnostics.md](diagnostics.md)   | Power-on self-test, test mode, error messages, the switch and sound test |

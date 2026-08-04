@@ -8,11 +8,11 @@ The connector is on Game Logic Board I. Transcribed from the three cabinet wirin
 schematics, and cross-checked against the connector list on Board I's own logic
 schematic — see [boards.md](boards.md):
 
-| Cabinet         | Game no. | Drawing            |
-| --------------- | -------- | ------------------ |
-| Upright         | 935      | `M051-00935-A033`  |
-| Cocktail table  | 936      | `M051-00936-A002`  |
-| Mini            | 937      | `M051-00937-A002`  |
+| Cabinet        | Game no. | Drawing           |
+| -------------- | -------- | ----------------- |
+| Upright        | 935      | `M051-00935-A033` |
+| Cocktail table | 936      | `M051-00936-A002` |
+| Mini           | 937      | `M051-00937-A002` |
 
 All three are dated 1/27/81 and all three drive the same board pair.
 
@@ -24,52 +24,52 @@ and `F`.
 
 ### Numbered side
 
-| Pin | Signal              | Wire    | Notes                          |
-| --- | ------------------- | ------- | ------------------------------ |
-| 1   | Logic GND           | `R-B`   | tied to pin `A`                |
-| 2   | Logic GND           | `R-B`   | tied to pin `B`                |
-| 3   | +5V                 | `R-W`   | tied to pin `C`                |
-| 4   | +5V                 | `R-W`   |                                |
-| 6   | Coin meter          | `G-W`   | drives the mechanical counter  |
-| 8   | Player 2 Start      | `B-Y`   |                                |
-| 9   | P2 Move Up          | `BLU-Y` | **cocktail only**              |
-| 10  | P2 Move Down        | `O-R`   | **cocktail only**              |
-| 11  | P2 Move Right       | `R-BLU` | **cocktail only**              |
-| 12  | P2 Move Left        | `O-G`   | **cocktail only**              |
-| 13  | P2 Smoke button     | `BLU-R` | **cocktail only**              |
-| 14  | Test switch         | `O-W`   |                                |
-| 15  | Cabinet-type strap  | `Y-G`   | grounded on the cocktail only — see below |
-| 16  | Video RED           | `RED`   | monitor colour interface pin 3 |
-| 17  | Video GREEN         | `GRN`   | monitor colour interface pin 5 |
-| 18  | Composite sync      | `ORN`   | monitor sync connector pin 1   |
-| 19  | Speaker             | `W-Y`   |                                |
-| 20  | +V Audio            | `W-BRN` | supply, not signal             |
-| 21  | Logic GND           | `Y-G`   | tied to pin `Z`                |
-| 22  | Logic GND           | `Y-G`   |                                |
+| Pin | Signal             | Wire    | Notes                                     |
+| --- | ------------------ | ------- | ----------------------------------------- |
+| 1   | Logic GND          | `R-B`   | tied to pin `A`                           |
+| 2   | Logic GND          | `R-B`   | tied to pin `B`                           |
+| 3   | +5V                | `R-W`   | tied to pin `C`                           |
+| 4   | +5V                | `R-W`   |                                           |
+| 6   | Coin meter         | `G-W`   | drives the mechanical counter             |
+| 8   | Player 2 Start     | `B-Y`   |                                           |
+| 9   | P2 Move Up         | `BLU-Y` | **cocktail only**                         |
+| 10  | P2 Move Down       | `O-R`   | **cocktail only**                         |
+| 11  | P2 Move Right      | `R-BLU` | **cocktail only**                         |
+| 12  | P2 Move Left       | `O-G`   | **cocktail only**                         |
+| 13  | P2 Smoke button    | `BLU-R` | **cocktail only**                         |
+| 14  | Test switch        | `O-W`   |                                           |
+| 15  | Cabinet-type strap | `Y-G`   | grounded on the cocktail only — see below |
+| 16  | Video RED          | `RED`   | monitor colour interface pin 3            |
+| 17  | Video GREEN        | `GRN`   | monitor colour interface pin 5            |
+| 18  | Composite sync     | `ORN`   | monitor sync connector pin 1              |
+| 19  | Speaker            | `W-Y`   |                                           |
+| 20  | +V Audio           | `W-BRN` | supply, not signal                        |
+| 21  | Logic GND          | `Y-G`   | tied to pin `Z`                           |
+| 22  | Logic GND          | `Y-G`   |                                           |
 
 ### Lettered side
 
-| Pin | Signal              | Wire    | Notes                              |
-| --- | ------------------- | ------- | ---------------------------------- |
-| `A` | Logic GND           | `R-B`   | tied to pin 1                      |
-| `B` | Logic GND           | `R-B`   | tied to pin 2                      |
-| `C` | +5V                 | `R-W`   | tied to pin 3. Key slot after      |
-| `D` | +5V                 | `R-W`   |                                    |
-| `E` | (to Credit Bypass)  | `BLU-B` | Key slot after                     |
-| `H` | Coin switch         | `O-G`   |                                    |
-| `J` | Player 1 Start      | `BR-B`  |                                    |
-| `K` | P1 Move Up          | `W-B`   |                                    |
-| `L` | P1 Move Down        | `BR-W`  |                                    |
-| `M` | P1 Move Right       | `Y-R`   |                                    |
-| `N` | P1 Move Left        | `BLU-W` |                                    |
-| `P` | P1 Smoke button     | `W-R`   |                                    |
-| `R` | Credit switch       | `W-O`   | the cash-box test button           |
-| `T` | – Sense             | `R-G`   | supply sense, back to power board  |
-| `U` | Video (4th line)    | `R-Y`   | monitor colour interface pin 6     |
-| `V` | Video BLUE          | `BLU`   | monitor colour interface pin 4     |
-| `W` | Speaker             | `G-B`   |                                    |
-| `Y` | Logic GND           | `Y-G`   |                                    |
-| `Z` | Logic GND           | `Y-G`   | tied to pin 21                     |
+| Pin | Signal             | Wire    | Notes                             |
+| --- | ------------------ | ------- | --------------------------------- |
+| `A` | Logic GND          | `R-B`   | tied to pin 1                     |
+| `B` | Logic GND          | `R-B`   | tied to pin 2                     |
+| `C` | +5V                | `R-W`   | tied to pin 3. Key slot after     |
+| `D` | +5V                | `R-W`   |                                   |
+| `E` | (to Credit Bypass) | `BLU-B` | Key slot after                    |
+| `H` | Coin switch        | `O-G`   |                                   |
+| `J` | Player 1 Start     | `BR-B`  |                                   |
+| `K` | P1 Move Up         | `W-B`   |                                   |
+| `L` | P1 Move Down       | `BR-W`  |                                   |
+| `M` | P1 Move Right      | `Y-R`   |                                   |
+| `N` | P1 Move Left       | `BLU-W` |                                   |
+| `P` | P1 Smoke button    | `W-R`   |                                   |
+| `R` | Credit switch      | `W-O`   | the cash-box test button          |
+| `T` | – Sense            | `R-G`   | supply sense, back to power board |
+| `U` | Video (4th line)   | `R-Y`   | monitor colour interface pin 6    |
+| `V` | Video BLUE         | `BLU`   | monitor colour interface pin 4    |
+| `W` | Speaker            | `G-B`   |                                   |
+| `Y` | Logic GND          | `Y-G`   |                                   |
+| `Z` | Logic GND          | `Y-G`   | tied to pin 21                    |
 
 ### The board's own names for these pins
 
@@ -78,18 +78,18 @@ wire colour and destination. Board I's logic schematic (`M051-00935-C023`) lists
 the same connector with Midway's functional signal names, and where the two
 differ the board drawing is the better source:
 
-| Pin  | Board I name             | Pin  | Board I name |
-| ---- | ------------------------ | ---- | ------------ |
-| `14` | `TEST POS.`              | `9`  | `P2 UP`      |
-| `H`  | `COIN S.W.`              | `10` | `P2 DN`      |
-| `J`  | `1 PLY SELECT`           | `11` | `P2 RT`      |
-| `K`  | `P1 UP`                  | `12` | `P2 LT`      |
-| `L`  | `P1 DN`                  | `13` | `P2 SMOKE`   |
-| `M`  | `P1 RT`                  | `15` | `TO GND FOR C.T. ONLY` |
-| `N`  | `P1 LT`                  | `19` | `SPKR`       |
-| `P`  | `P1 SMOKE`               | `W`  | `SPKR`       |
-| `R`  | `CREDIT S.W.`            | `7`  | `NC`         |
-| `8`  | `2 PLY SELECT`           |      |              |
+| Pin  | Board I name   | Pin  | Board I name           |
+| ---- | -------------- | ---- | ---------------------- |
+| `14` | `TEST POS.`    | `9`  | `P2 UP`                |
+| `H`  | `COIN S.W.`    | `10` | `P2 DN`                |
+| `J`  | `1 PLY SELECT` | `11` | `P2 RT`                |
+| `K`  | `P1 UP`        | `12` | `P2 LT`                |
+| `L`  | `P1 DN`        | `13` | `P2 SMOKE`             |
+| `M`  | `P1 RT`        | `15` | `TO GND FOR C.T. ONLY` |
+| `N`  | `P1 LT`        | `19` | `SPKR`                 |
+| `P`  | `P1 SMOKE`     | `W`  | `SPKR`                 |
+| `R`  | `CREDIT S.W.`  | `7`  | `NC`                   |
+| `8`  | `2 PLY SELECT` |      |                        |
 
 Two corrections fall out of this list:
 
@@ -202,10 +202,10 @@ procedure, no parts callout. It is drawn and then ignored.
 Not a logic signal, but the thing most likely to confuse someone servicing a real
 cabinet, and the manual leads with it on every cabinet page:
 
-| Cabinet        | Location                              | Opens when            |
-| -------------- | ------------------------------------- | --------------------- |
-| Upright, mini  | Right rear side, in the back door area | Back door is removed  |
-| Cocktail       | In the cabinet, left of the coin door | Coin door is opened   |
+| Cabinet       | Location                               | Opens when           |
+| ------------- | -------------------------------------- | -------------------- |
+| Upright, mini | Right rear side, in the back door area | Back door is removed |
+| Cocktail      | In the cabinet, left of the coin door  | Coin door is opened  |
 
 To restore power while servicing, pull the switch fully out. The transformer also
 has extra taps to compensate for a low or high supply line — see
