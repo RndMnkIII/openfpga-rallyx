@@ -39,11 +39,11 @@ and `F`.
 | 13  | P2 Smoke button    | `BLU-R` | **cocktail only**                         |
 | 14  | Test switch        | `O-W`   |                                           |
 | 15  | Cabinet-type strap | `Y-G`   | grounded on the cocktail only — see below |
-| 16  | Video RED          | `RED`   | monitor colour interface pin 3            |
-| 17  | Video GREEN        | `GRN`   | monitor colour interface pin 5            |
+| 16  | Monitor ground     | `RED`   | monitor colour interface pin 3            |
+| 17  | Video green        | `GRN`   | monitor colour interface pin 5            |
 | 18  | Composite sync     | `ORN`   | monitor sync connector pin 1              |
 | 19  | Speaker            | `W-Y`   |                                           |
-| 20  | +V Audio           | `W-BRN` | supply, not signal                        |
+| 20  | +12V from supply   | `W-BRN` | supply, not signal — see below            |
 | 21  | Logic GND          | `Y-G`   | tied to pin `Z`                           |
 | 22  | Logic GND          | `Y-G`   |                                           |
 
@@ -64,9 +64,9 @@ and `F`.
 | `N` | P1 Move Left       | `BLU-W` |                                   |
 | `P` | P1 Smoke button    | `W-R`   |                                   |
 | `R` | Credit switch      | `W-O`   | the cash-box test button          |
-| `T` | – Sense            | `R-G`   | supply sense, back to power board |
-| `U` | Video (4th line)   | `R-Y`   | monitor colour interface pin 6    |
-| `V` | Video BLUE         | `BLU`   | monitor colour interface pin 4    |
+| `T` | Common ground      | `R-G`   | the supply senses at this point   |
+| `U` | Video red          | `R-Y`   | monitor colour interface pin 6    |
+| `V` | Video blue         | `BLU`   | monitor colour interface pin 4    |
 | `W` | Speaker            | `G-B`   |                                   |
 | `Y` | Logic GND          | `Y-G`   |                                   |
 | `Z` | Logic GND          | `Y-G`   | tied to pin 21                    |
@@ -77,6 +77,8 @@ The tables above were read off the cabinet wiring schematics, which label pins b
 wire colour and destination. Board I's logic schematic (`M051-00935-C023`) lists
 the same connector with Midway's functional signal names, and where the two
 differ the board drawing is the better source:
+
+Controls, coin and audio:
 
 | Pin  | Board I name   | Pin  | Board I name           |
 | ---- | -------------- | ---- | ---------------------- |
@@ -91,7 +93,34 @@ differ the board drawing is the better source:
 | `R`  | `CREDIT S.W.`  | `7`  | `NC`                   |
 | `8`  | `2 PLY SELECT` |      |                        |
 
-Two corrections fall out of this list:
+Video, supply and ground — this half of the list is drawn as bracketed groups
+rather than one label per pin:
+
+| Pin(s)                  | Board I name              |
+| ----------------------- | ------------------------- |
+| `T`                     | `COMM. GND`               |
+| `16`                    | `MONITOR GND`             |
+| `A`, `1`, `B`, `2`      | `C.T. GND` / `5 V`        |
+| `C`, `3`, `D`, `4`      | `+5 V IN FR. P.S.`        |
+| `X`, `20`               | `+12 V IN FR. P.S.`       |
+| `Y`, `21`, `Z`, `22`    | `C.T. GND` / `12 V`       |
+| `V`                     | `BLUE GUN`                |
+| `17`                    | `GRN GUN`                 |
+| `U`                     | `RED GUN`                 |
+| `18`                    | `COMP. SYNC TO MONITOR`   |
+| `5`                     | `PWR CREDIT MULT`, fed from `+5V` |
+| `E`                     | `CREDIT MULT`, fed from `/RESET`  |
+| `F`                     | `COIN METER`              |
+| `6`                     | `COIN C`                  |
+
+> [!NOTE]
+> The four labels `PWR CREDIT MULT`, `CREDIT MULT`, `COIN METER` and
+> `COMP. SYNC TO MONITOR` sit slightly out of step with the pin boxes they
+> annotate, so the `F` / `6` pairing above is the least certain row in the table.
+> What is unambiguous is the wiring drawn into each pin: `+5V` into `5`,
+> `/RESET` into `E`, `COIN C` into `6`, and `CMPSYNC` through `R32` into `18`.
+
+Three corrections fall out of this list:
 
 **Pin 7 is `NC`.** Not merely undrawn on the cabinet harnesses — the board
 drawing marks it explicitly as no-connect.
@@ -103,18 +132,27 @@ such input on the connector. The cabinet wiring schematics obscure this by
 drawing it as one more logic ground on the cocktail sheet and omitting it
 elsewhere.
 
+**There are two ground domains, not one.** `A`/`1`/`B`/`2` are the 5 V ground
+and `Y`/`21`/`Z`/`22` the 12 V ground, both labelled `C.T. GND`. `T` is
+`COMM. GND` and `16` is `MONITOR GND` — four distinct grounds in all. The cabinet
+harnesses draw every one of them with the same `Y-G` or `R-B` wire and the same
+`LOGIC GND` caption, which hides the split entirely.
+
 Note also that the start buttons are named `1 PLY SELECT` and `2 PLY SELECT`
 rather than "start", and the test switch `TEST POS.` rather than "test".
 
-Letters `F`, `S` and `X` and pin `5` appear on neither the cabinet harnesses nor
-the Board I connector list. `F` is a key position.
+Letters `F` and `S` do not appear on the cabinet harnesses. `F` is a key
+position; both are named on the Board I connector list above.
 
-> [!NOTE]
-> Pin `U` carries the fourth wire of the 6-position monitor colour interface, on
-> a red/yellow wire. The other three are labelled `RED`, `BLU` and `GRN` on the
-> drawing; this one is labelled only by wire colour. It is most likely the video
-> return, but the manual does not say, and it is recorded here as unknown rather
-> than assumed.
+> [!WARNING]
+> On the cabinet wiring schematics the monitor colour interface entries are
+> **wire colours, not signal names**. `RED`, `BLU`, `GRN` and `R-Y` are red,
+> blue, green and red/yellow wires, in the same convention the rest of the
+> harness uses (`R-W` red/white, `BR-B` brown/black). Reading them as video
+> signals gets two pins backwards: the wire labelled `RED` runs to pin `16`,
+> which the board calls **monitor ground**, and the red/yellow wire runs to pin
+> `U`, which the board calls the **red gun**. Take the signal names from the
+> board's own connector list, not from the harness.
 
 ## Controls
 
@@ -135,10 +173,10 @@ Four lines to the monitor plus separate composite sync:
 
 ```
    board                             monitor
-   pin 16  RED  --------------------> colour interface 3
-   pin V   BLU  --------------------> colour interface 4
-   pin 17  GRN  --------------------> colour interface 5
-   pin U   (R-Y wire) --------------> colour interface 6
+   pin U   red gun       (R-Y wire) -> colour interface 6
+   pin 17  green gun     (GRN wire) -> colour interface 5
+   pin V   blue gun      (BLU wire) -> colour interface 4
+   pin 16  monitor gnd   (RED wire) -> colour interface 3
    pin 18  ORN  --------------------> sync connector 1
 ```
 
@@ -150,7 +188,9 @@ inter-board connector calls this signal `/CMPSYNC` (see
 
 One audio line off the board on pin 19, returning on pin `W`, into a 6" x 9"
 8-ohm 9-watt speaker (Midway part `0017-00003-0187`). Audio supply comes back
-the other way on pin 20 as `+V Audio`.
+the other way on pin 20, which the board's connector list calls `+12 V IN FR.
+P.S.` and the power supply schematic calls `+V AUDIO ≈13V at 1.5 AMP` — the same
+rail under two names.
 
 There is one amplifier and one speaker. The volume pot on Board I sets the level
 of everything.
