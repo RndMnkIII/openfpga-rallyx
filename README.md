@@ -8,6 +8,23 @@
 
 For more info about Analogizer adapter check the [wiki](https://github.com/RndMnkIII/Analogizer/wiki).
 
+> [!NOTE]
+> The tables below describe the Analogizer adapter's own capabilities, verified by
+> RndMnkIII against his hardware. They are not re-tested here: no maintainer of
+> this core owns the adapter, a CRT, or the SNAC harnesses. Send analog video and
+> SNAC problems to the [Analogizer project](https://github.com/RndMnkIII/Analogizer)
+> rather than to this repo.
+>
+> Three things are specific to this core:
+> - **Rally-X is single player.** Only player 1 reaches the game, so SNAC
+>   player-2 assignments do nothing.
+> - **Blank the Pocket Screen does nothing.** The setting is read out of
+>   `analogizer.bin` but is not wired to the video output here.
+> - **Cart power is on for everyone.** The adapter draws power from the
+>   cartridge slot, so `cartridge_adapter` in `core.json` enables it for every
+>   user - this is not gated by the menu option. Don't leave a cartridge in the
+>   slot while running this core.
+
 Analogizer uses a configuration file to select Analogizer adapter remaining options, not based on the Pocket's menu system. It is necessary to run an external utility [Pupdate >= 4.4.0](https://github.com/mattpannella/pupdate/releases)  or [AnalogizerConfigurator >= 0.4](https://github.com/RndMnkIII/AnalogizerConfigurator/releases) to generate such a file. Once generated, you must copy the `analogizer.bin` file to the `/Assets/analogizer/common` folder on the Pocket SD card. If this folder does not exist, you must create it. Check the refered utility for the relevant options for the Analogizer adapter: SNAC controller, SNAC controller assigments (how to map physical SNAC game controllers to the Pocket openFPGA framework PAD format), Video output and Blank the Pocket Screen (On/Off).
 
 The core can output RGBS, RGsB, YPbPr, Y/C and SVGA scandoubler (50% scanlines) video signals.

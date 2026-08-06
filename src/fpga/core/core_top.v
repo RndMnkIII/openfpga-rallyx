@@ -231,13 +231,15 @@ localparam [7:0] ADDRESS_ANALOGIZER_CONFIG = 8'hF7;
 // not using the IR port, so turn off both the LED, and
 // disable the receive circuit to save power
 assign port_ir_tx = 0;
-// assign port_ir_rx_disable = 1;
+assign port_ir_rx_disable = 1;
 
-// // bridge endianness
+// bridge endianness
 assign bridge_endian_little = 0;
 
-// // cart is unused, so set all level translators accordingly
-// // directions are 0:IN, 1:OUT
+// cart pins are driven by the Analogizer block at the bottom of this file.
+// When its enable is low it restores exactly what this core asserted before
+// Analogizer landed: bank0 = 4'hf/out, banks 1-3 = 8'hzz/in, pin30/31 = z.
+// directions are 0:IN, 1:OUT
 // assign cart_tran_bank3 = 8'hzz;
 // assign cart_tran_bank3_dir = 1'b0;
 // assign cart_tran_bank2 = 8'hzz;
