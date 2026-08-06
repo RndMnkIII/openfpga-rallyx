@@ -2,9 +2,9 @@
     "core": {
         "magic": "APF_VER_1",
         "metadata": {
-            "platform_ids": ["rallyx"],
+            "platform_ids": ["rallyx","analogizer"],
             "shortname": "Rally-X",
-            "description": "Namco Rally-X and New Rally-X for Analogue Pocket",
+            "description": "Namco Rally-X and New Rally-X for Analogue Pocket & Analogizer",
             "author": "MorganVieira",
             "url": "https://github.com/morgan-vieira/openfpga-rallyx",
             "version": "1.4.3",
@@ -20,7 +20,7 @@
             },
             "hardware": {
                 "link_port": false,
-                "cartridge_adapter": -1
+                "cartridge_adapter": 0
             }
         },
         "cores": [
