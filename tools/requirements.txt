@@ -1,0 +1,13 @@
+# Third-party packages for tools/.
+#
+# Only make_pocket_image.py needs anything here - it converts PNG art into the
+# Pocket's 16-bit .bin format. sync.py, build_rom.py, package.py and _common.py
+# are standard library only and run on a bare Python 3 install.
+#
+#     python -m pip install -r tools/requirements.txt
+#
+# Bounds are the oldest versions exposing the APIs actually used, not pins;
+# pip is free to install current releases.
+
+numpy>=1.24          # asarray, rot90, zeros, frombuffer
+Pillow>=9.1          # Image.open/new/fromarray, thumbnail, Image.LANCZOS

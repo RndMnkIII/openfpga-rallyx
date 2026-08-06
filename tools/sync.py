@@ -36,7 +36,9 @@ def git(args, dry_run):
         return
     result = subprocess.run(["git", *[str(a) for a in args]])
     if result.returncode != 0:
-        raise Fail(f"git {' '.join(str(a) for a in args)} failed (exit {result.returncode})")
+        raise Fail(
+            f"git {' '.join(str(a) for a in args)} failed (exit {result.returncode})"
+        )
 
 
 def default_branch(path):
@@ -97,7 +99,9 @@ def main():
     )
     parser.add_argument("--repo", help="sync only this repo (default: all)")
     parser.add_argument(
-        "--dry-run", action="store_true", help="print the git commands without running them"
+        "--dry-run",
+        action="store_true",
+        help="print the git commands without running them",
     )
     parser.add_argument(
         "--root",
