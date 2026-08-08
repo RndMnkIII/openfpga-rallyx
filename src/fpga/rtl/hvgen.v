@@ -18,6 +18,12 @@ module HVGEN
 	output reg			VSYN = 1
 );
 
+// Raster geometry, matching the Namco board: 384 pixels x 264 lines off the
+// 6.144 MHz pixel clock -> 16.000 kHz line rate, 60.6061 Hz frame rate.
+// Both counters skip a range rather than wrapping, so the totals are
+// (0..last_before_jump) + (jump_target..511), not 512.
+//   H: 0..342 + 471..511 = 384
+//   V: 0..233 + 482..511 = 264
 reg [8:0] hcnt = 0;
 reg [8:0] vcnt = 0;
 
@@ -33,7 +39,7 @@ always @(posedge PCLK) begin
 			case (vcnt)
 				223: begin VBLK <= 1; vcnt <= vcnt + 9'd1; end
 				226: begin VSYN <= 0; vcnt <= vcnt + 9'd1; end
-				233: begin VSYN <= 1; vcnt <= 9'd483;	  end
+				233: begin VSYN <= 1; vcnt <= 9'd482;	  end
 				511: begin VBLK <= 0; vcnt <= 9'd0;		  end
 				default: vcnt <= vcnt + 9'd1;
 			endcase
