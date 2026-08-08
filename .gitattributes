@@ -1,0 +1,12 @@
+# Normalize text files to LF in the repository; each platform checks out what
+# its own tools expect. Without this, a Windows tool rewriting a file turns a
+# one-line edit into a whole-file diff.
+* text=auto
+
+# Never convert binaries. A mangled bitstream or Pocket image is silent
+# corruption that only shows up on hardware.
+*.png   binary
+*.bin   binary
+*.rom   binary
+*.rbf_r binary
+*.zip   binary
