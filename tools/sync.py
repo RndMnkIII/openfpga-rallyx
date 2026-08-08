@@ -2,7 +2,7 @@
 import argparse
 import subprocess
 from pathlib import Path
-from typing import NamedTuple, Optional
+from typing import NamedTuple
 
 from _common import REPO_ROOT, Fail, ok, run, skip, step
 
@@ -10,7 +10,7 @@ from _common import REPO_ROOT, Fail, ok, run, skip, step
 class Repo(NamedTuple):
     name: str
     url: str
-    ref: Optional[str] = None
+    ref: str | None = None
 
 
 REFERENCE_REPOS = (
@@ -34,7 +34,7 @@ def git(args, dry_run):
     if dry_run:
         skip("git " + " ".join(str(a) for a in args))
         return
-    result = subprocess.run(["git", *[str(a) for a in args]])
+    result = subprocess.run(["git", *[str(a) for a in args]], check=False)
     if result.returncode != 0:
         raise Fail(
             f"git {' '.join(str(a) for a in args)} failed (exit {result.returncode})"
@@ -46,6 +46,7 @@ def default_branch(path):
         ["git", "-C", str(path), "symbolic-ref", "--quiet", "refs/remotes/origin/HEAD"],
         capture_output=True,
         text=True,
+        check=False,
     )
     head = result.stdout.strip()
     if result.returncode == 0 and head:
