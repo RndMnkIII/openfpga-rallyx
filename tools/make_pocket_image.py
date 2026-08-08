@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import argparse
+from pathlib import Path
+
 import numpy as np
 from PIL import Image
 
@@ -42,9 +44,10 @@ def main():
     a = ap.parse_args()
     w, h = SIZES[a.size]
     if a.mode == "encode":
-        open(a.dst, "wb").write(encode(Image.open(a.src), w, h))
+        with Image.open(a.src) as img:
+            Path(a.dst).write_bytes(encode(img, w, h))
     else:
-        decode(open(a.src, "rb").read(), w, h).save(a.dst)
+        decode(Path(a.src).read_bytes(), w, h).save(a.dst)
     print(f"{a.mode} {a.size} {w}x{h} -> {a.dst}")
 
 
