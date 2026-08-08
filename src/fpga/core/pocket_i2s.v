@@ -40,7 +40,9 @@ module pocket_i2s
 
     // Synchronize audio samples coming from the core
     wire [31:0] audio_sampledata_s;
-    synch_3 #(.WIDTH(32)) sync_snd({AUDIO_L, AUDIO_R} ,audio_sampledata_s, audio_sclk);
+    // trailing commas leave synch_3's rise/fall outputs explicitly unconnected --
+    // Quartus infers that from the short port list, Icarus will not elaborate
+    synch_3 #(.WIDTH(32)) sync_snd({AUDIO_L, AUDIO_R} ,audio_sampledata_s, audio_sclk, , );
 
     reg  [31:0] audio_sampshift;
     reg  [4:0]  audio_lrck_cnt;

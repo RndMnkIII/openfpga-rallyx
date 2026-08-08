@@ -117,7 +117,9 @@ assign V0DO = hs_access ? 8'h00 : wram0_do;
 
 GDPRAM #(11,8) vram0( VCLKx4, VRAMADRS, CHRC, wram0_clk, wram0_addr, wram0_we, wram0_di, wram0_do);  
 GDPRAM #(11,8)	vram1( VCLKx4, VRAMADRS, ATTR, CPUCLK, CPUADDR[10:0], ( CPUWE & CEV1 ), CPUDI, V1DO );  
-GDPRAM #(4,8)	aram0( VCLKx4, ARAMADRS, ARDT, CPUCLK, CPUADDR[3:0],  ( CPUWE & CEAT ), CPUDI );
+// trailing comma leaves DO1 explicitly unconnected -- Quartus infers that from
+// the short port list, Icarus will not elaborate without it
+GDPRAM #(4,8)	aram0( VCLKx4, ARAMADRS, ARDT, CPUCLK, CPUADDR[3:0],  ( CPUWE & CEAT ), CPUDI, );
 
 wire				BGF = ATTR[5];
 
