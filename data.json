@@ -6,7 +6,7 @@
                 "name": "Game ROM",
                 "id": 0,
                 "required": true,
-                "parameters": "0x281",
+                "parameters": "0x081",
                 "extensions": [
                     "rom"
                 ],

@@ -1,6 +1,6 @@
 Rally-X is a maze-chase arcade game developed by Namco. The player drives a car through a scrolling maze, collecting every flag while evading pursuing enemy cars, aided by a limited smoke screen and a radar that tracks the flags and chasers.
 
-Note: You must provide your own roms to use this core.
+Note: You must provide your own roms to use this core. Pocket asks which game to load each time the core starts: pick rallyx.rom for Rally-X or nrallyx.rom for New Rally-X. You can also switch games from the core menu while running.
 
 Developer(s)
     Namco
