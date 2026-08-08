@@ -23,6 +23,7 @@ what it measured rather than just a verdict — the numbers are the point.
 | `tb_nrx_bang` | 2000.000 Hz noise clock, 3584-tick burst = 1.792 s |
 | `tb_pocket_i2s` | MCLK 12.288 MHz, SCLK 3.072 MHz, LRCK 48.000 kHz, 64 bit clocks per frame |
 | `tb_rams` | One-clock registered read latency on every memory primitive |
+| `tb_t80_timing` | Z80 instruction cycle counts — T-states per instruction, measured M1-to-M1 |
 
 ## Two things you need to know
 
@@ -32,14 +33,27 @@ Cyclone V, but under Icarus they stay X forever and the clocks never start — t
 module just looks dead. Every testbench here opens with an `initial` block
 forcing them to 0. Copy that pattern for any new one.
 
-**The Z80's instruction timing is not tested.** `T80s` is VHDL, and there is no
-working VHDL simulator on this machine — Questa FSE ships with Quartus Lite but
-needs a license file from Intel, and GHDL is not installed. `sim/stubs.v`
-therefore supplies an inert `T80s` so the surrounding glue elaborates. What is
-proven is that the CPU is *clocked* at 3.072 MHz and interrupted once per frame.
-What is **not** proven is that T80 takes the same number of cycles per
-instruction as a real Z80. Closing that needs either a free Questa FSE license
-or GHDL installed, plus a cycle-counting test ROM.
+**The Z80 runs under GHDL, not Icarus.** `T80s` is VHDL, so `tb_t80_timing.vhd`
+lives in `sim/vhdl/` and `tools/sim.py` routes it to GHDL automatically. If GHDL
+is missing the runner skips it and says so rather than failing. The Verilog
+benches still use the inert `T80s` in `stubs.v` — they measure the glue around
+the CPU, not the CPU.
+
+Three GHDL flags are load-bearing: `--std=93` (T80 is VHDL-93), `-fsynopsys`
+(its non-standard IEEE packages), and `--syn-binding`. Without the last one
+GHDL refuses to bind `T80` inside `T80s` — the component is declared in
+`T80_Pack` rather than in the architecture, and GHDL's strict default-binding
+rule will not resolve that. The symptom is a silent `instance "u0" of component
+"T80" is not bound` warning and a CPU that never executes anything.
+
+**Known T80 deviation: unconditional `RET` costs 11 T-states, not 10.** Measured
+on all three `RET`s in the test program. T80 runs it down the same path as a
+*taken* `RET cc`, which legitimately costs 11. `RET cc` itself is correct in
+both directions (5 not-taken, 11 taken), and the other 26 instructions match the
+Z80 exactly. The deviation is listed in the bench's `ALLOW` array so a
+regression still fails while a characterised gap does not leave the suite
+permanently red — set `ALLOW` to `EXPECT` to make it a hard failure instead.
+T80 is vendored third-party VHDL and has not been modified.
 
 `LINEBUF` is the better case: it wraps an `altsyncram` megafunction, and
 `tools/sim.py` compiles Quartus's own simulation model
@@ -56,3 +70,6 @@ that model cannot be found does it fall back to the behavioural stand-in in
   behaviour is protocol, not clock timing.
 - `mf_pllbase` — a hard PLL; its output frequencies are a fitter constraint,
   checked by the Quartus compile rather than by simulation.
+- Prefixed Z80 opcodes (CB/ED/DD/FD). They assert M1 twice, so an M1-to-M1
+  delta reports the prefix and the opcode separately rather than the
+  instruction as a whole. `tb_t80_timing` covers unprefixed opcodes only.
