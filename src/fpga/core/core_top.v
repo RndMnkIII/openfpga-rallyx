@@ -646,7 +646,13 @@ HVGEN hvgen (
     .HPOS ( rx_hpos ),
     .VPOS ( rx_vpos ),
     .PCLK ( rx_pclk ),
-    .iRGB ( { rx_pout[7:6], 2'b00, rx_pout[5:3], 1'b0, rx_pout[2:0], 1'b0 } ),
+    // POUT is the raw Namco palette PROM byte, BBGGGRRR, driving a resistor
+    // DAC on the board. Widen each channel to a nibble by REPLICATING its top
+    // bits, not by padding with zeros -- padding never reaches full scale, so
+    // white came out (238,238,204) and blue topped out at 80%.
+    .iRGB ( { rx_pout[7:6], rx_pout[7:6],       // blue  2 bits -> 4
+              rx_pout[5:3], rx_pout[5],         // green 3 bits -> 4
+              rx_pout[2:0], rx_pout[2] } ),     // red   3 bits -> 4
     .oRGB ( rx_orgb ),
     .HBLK ( rx_hblk ),
     .VBLK ( rx_vblk ),
