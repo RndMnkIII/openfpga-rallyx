@@ -133,7 +133,9 @@ def run_one_vhdl(ghdl, bench, root, workdir):
 
     built = subprocess.run(
         [str(ghdl), "-a", *GHDL_FLAGS, f"--workdir={lib}", *srcs],
-        capture_output=True, text=True, check=False,
+        capture_output=True,
+        text=True,
+        check=False,
     )
     if built.returncode != 0:
         print(built.stdout, end="")
@@ -141,9 +143,18 @@ def run_one_vhdl(ghdl, bench, root, workdir):
         return False
 
     result = subprocess.run(
-        [str(ghdl), "-r", *GHDL_FLAGS, *GHDL_ELAB_FLAGS, f"--workdir={lib}",
-         bench.stem, "--ieee-asserts=disable"],
-        capture_output=True, text=True, check=False,
+        [
+            str(ghdl),
+            "-r",
+            *GHDL_FLAGS,
+            *GHDL_ELAB_FLAGS,
+            f"--workdir={lib}",
+            bench.stem,
+            "--ieee-asserts=disable",
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
     )
     # GHDL's `report` goes to stderr, prefixed with file:line:col:@time:(level):
     # The path is matched non-greedily -- on Windows it contains a drive colon.
@@ -156,7 +167,9 @@ def run_one_vhdl(ghdl, bench, root, workdir):
 
 
 def discover(sim_dir, only):
-    benches = sorted(sim_dir.glob("tb_*.v")) + sorted((sim_dir / "vhdl").glob("tb_*.vhd"))
+    benches = sorted(sim_dir.glob("tb_*.v")) + sorted(
+        (sim_dir / "vhdl").glob("tb_*.vhd")
+    )
     if not benches:
         raise Fail(f"No testbenches found under {sim_dir}")
     if not only:
@@ -173,9 +186,12 @@ def run_one(iverilog, bench, srcs, defines, sim_dir, workdir):
     compile_cmd = [
         str(iverilog),
         "-g2012",
-        "-I", str(sim_dir),
-        "-s", bench.stem,
-        "-o", str(vvp_out),
+        "-I",
+        str(sim_dir),
+        "-s",
+        bench.stem,
+        "-o",
+        str(vvp_out),
         *defines,
         str(bench),
         *[str(s) for s in srcs],
@@ -262,7 +278,9 @@ def main():
         "--iverilog", type=Path, help="path to iverilog (default: autodetect)"
     )
     parser.add_argument(
-        "--ghdl", type=Path, help="path to ghdl for the VHDL benches (default: autodetect)"
+        "--ghdl",
+        type=Path,
+        help="path to ghdl for the VHDL benches (default: autodetect)",
     )
     args = parser.parse_args()
     simulate(args.root, args.test, args.iverilog, args.ghdl)
