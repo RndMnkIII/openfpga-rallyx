@@ -1,6 +1,6 @@
 # openFPGA-RallyX
 
-A Rally-X core for the Analogue Pocket.
+An Analogue Pocket core that plays both Rally-X and New Rally-X.
 
 ## A note from morgan-vieira
 
@@ -40,7 +40,7 @@ The same road, walked backwards, is how we diagnose. When a user reports a game 
 - `src/fpga/apf/` - Analogue's APF framework and the real top level, `apf_top`. Vendor code, and the one part every Pocket core shares. Don't touch it.
 - `src/fpga/core/` - our glue between APF and the game: `core_top.v` (the module APF instantiates), `core_bridge_cmd.v` for the host bridge, `data_loader.sv` for ROM download, `pocket_i2s.v` for audio, `mf_pllbase` for clocks. Pocket-side work belongs here.
 - `src/fpga/rtl/` - the Rally-X arcade hardware, inherited from the MiSTer core. `fpga_nrx.v` on top, then video, sprite, sound, bang, rams, linebuf, hvgen. Keep it as close to upstream as the port allows; drift here is how the game stops being the game.
-- `src/fpga/rtl/cpu/` - the T80 Z80 core, third-party VHDL. A black box with a datasheet.
+- `src/fpga/rtl/cpu/` - the T80 Z80 core, third-party VHDL. Vendored unmodified, which is not the same as taken on trust. `sim/vhdl/` measures its instruction timing prefixed and unprefixed, its mode 0 interrupt handshake, and its actual results and flags against the canonical Z80 exercisers - whose expected values come from real hardware rather than from our reading of the datasheet. It is the one module we cannot fix, so it is the one we check hardest.
 - `src/fpga/analogizer/` - Analogizer adapter support: analog video out and SNAC controllers over the cartridge port. Third-party, from RndMnkIII's Analogizer project rather than Analogue, with its own manifest `analogizer.qip`. Vendor code - keep it close to upstream and resist refactoring it. No maintainer owns the adapter, a CRT, or the SNAC harnesses, so we cannot verify the video modes or controller types: route those bug reports upstream instead of guessing at fixes here. What we do own is the hook block at the bottom of `core_top.v`, the `Enable Analogizer` menu entry, and `cartridge_adapter` in `core.json` - which turns cart power on for every user, adapter or not.
 - `*.json` and `info.txt` at the repo root - the Pocket core definition files. Menu entries, dip switches, video modes, and ROM slots are declared here, not in RTL. `docs/analogue/core-definition-files/` is the spec.
 - `dist/` - the hand-authored half of the SD payload: core icon and platform art. `tools/package.py` merges it with the compiled bitstream into `release/`.

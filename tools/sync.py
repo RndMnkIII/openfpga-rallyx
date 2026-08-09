@@ -27,6 +27,11 @@ REFERENCE_REPOS = (
         "https://github.com/RndMnkIII/openfpga-SNES-Analogizer.git",
     ),
     Repo("arcade-digdug", "https://github.com/opengateware/arcade-digdug.git"),
+    # Not a reference core. Carries the canonical Z80 exercisers -- prelim.com
+    # and Frank Cringle's zexdoc/zexall -- which sim/vhdl/tb_t80_exerciser.vhd
+    # runs against T80. Fetched rather than committed, like everything else
+    # under .repos/.
+    Repo("z80-exercisers", "https://github.com/superzazu/z80.git"),
 )
 
 

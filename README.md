@@ -4,4 +4,4 @@
 
 # openFPGA-RallyX
 
-TBD
+An Analogue Pocket core that plays both Rally-X and New Rally-X.
