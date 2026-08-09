@@ -318,7 +318,34 @@ assign vpll_feed = 1'bZ;
 // add your own devices here
 wire [31:0] analogizer_bridge_rd_data;
 
+// the high-score save slot, declared up here because the read mux below
+// reaches for it. Driven further down, with the game side of the core.
+    reg  [63:0] hs_file = {64{1'b1}};
+
+// bus-communication.md: "Upon receiving a read the core may not immediately
+// provide the read data and has up until the next read strobe to drive
+// bridge_rd_data." So the framework samples the answer to a read when the NEXT
+// read arrives, by which time bridge_addr has moved on. A mux driven straight
+// off bridge_addr answers with the following word instead, which for a two
+// word slot swaps its halves -- and answers the last word with whatever came
+// after the slot, which is why an untouched save first read back as
+// FF FF FF FF 00 00 00 00. Latch the address each strobe arrives with and
+// answer from that.
+//
+// Only this slot is served from the latched address. The framework region has
+// its own handling inside core_bridge_cmd and the rest of the mux returns
+// values that do not depend on which address asked, so they are left alone.
+    reg  [31:0] hs_rd_addr = 32'h0;
+always @(posedge clk_74a) if (bridge_rd) hs_rd_addr <= bridge_addr;
+
+    wire hs_rd_hit = (hs_rd_addr[31:4] == 28'h3000000);
+    wire [31:0] hs_rd_data = hs_rd_addr[2]
+        ? { hs_file[39:32], hs_file[47:40], hs_file[55:48], hs_file[63:56] }
+        : { hs_file[ 7: 0], hs_file[15: 8], hs_file[23:16], hs_file[31:24] };
+
 always @(*) begin
+    if (hs_rd_hit) bridge_rd_data <= hs_rd_data;
+    else
     casex(bridge_addr)
     default: begin
         bridge_rd_data <= 0;
@@ -331,6 +358,9 @@ always @(*) begin
         // bridge_rd_data <= example_device_data;
         bridge_rd_data <= 0;
     end
+    // High-score save slot. bridge_endian_little is 0, so the first byte of
+    // the file is the top byte of the word -- the same swap data_loader does
+    // on the way in. Byte 0 is $8060.
     {ADDRESS_ANALOGIZER_CONFIG,24'h0}: begin
         bridge_rd_data <= analogizer_bridge_rd_data;
     end // Analogizer
@@ -417,10 +447,20 @@ end
 // bridge data slot access
 // synchronous to clk_74a
 
-    wire    [9:0]   datatable_addr;
-    wire            datatable_wren;
-    wire    [31:0]  datatable_data;
+    reg     [9:0]   datatable_addr = 10'd0;
+    reg             datatable_wren = 1'b0;
+    reg     [31:0]  datatable_data = 32'd0;
     wire    [31:0]  datatable_q;
+
+// APF sizes a nonvolatile slot from the file it loaded, so on a first run --
+// when no save file exists yet -- it would read nothing back out unless the
+// core states the size itself. The high-score slot is eight bytes and sits at
+// slot index 2, whose size word the table addresses as index*2 + 1.
+always @(posedge clk_74a) begin
+    datatable_wren <= 1'b1;
+    datatable_addr <= 10'd5;
+    datatable_data <= 32'd8;
+end
 
 core_bridge_cmd icb (
 
@@ -559,7 +599,10 @@ synch_3 s_pa (osnotify_inmenu, pause_menu_s, clk_core_24576);
 synch_3 s_pb (.i(cont1_key[8]), .clk(clk_core_24576), .rise(pause_btn_rise));
     reg pause_toggle = 1'b0;
 always @(posedge clk_core_24576) if (pause_btn_rise) pause_toggle <= ~pause_toggle;
-    wire pause_s = pause_toggle | pause_menu_s;
+    // the hiscore block pauses the Z80 around its own RAM accesses, because
+    // reaching the score row takes the CPU's port away from it
+    wire hs_pause;
+    wire pause_s = pause_toggle | pause_menu_s | hs_pause;
     // active-high game reset: held until ROMs are loaded AND host reset released
     wire game_reset = ~reset_n_s | ~download_done_s | dsw_reset;
 
@@ -577,6 +620,7 @@ always @(posedge clk_74a) begin
     if (bridge_wr && bridge_addr == 32'h10030000) dsw_serv  <= bridge_wr_data[7:0];
     if (bridge_wr && bridge_addr == 32'hf2000000) ena_analogizer <= bridge_wr_data[0];
 end
+
     wire [7:0] dsw_reg = dsw_coin | dsw_diff | dsw_bonus | dsw_serv;
     wire [7:0] dsw_s;
 synch_3 #(.WIDTH(8)) s_dsw (dsw_reg, dsw_s, clk_core_24576);
@@ -588,6 +632,71 @@ always @(posedge clk_core_24576) begin
     else if (dsw_hold != 16'h0)    dsw_hold <= dsw_hold - 16'd1;
 end
     wire dsw_reset = (dsw_hold != 16'h0);
+
+// ---- high-score save slot ----
+// hs_file serves both directions. APF fills it from the save file at boot,
+// the game side publishes captures back into it, and APF reads it out again
+// when the core shuts down. All ones is what a first run looks like: no file,
+// so nothing to restore.
+//
+// The two writers never overlap. APF loads while the game is still held in
+// reset, and the game side cannot capture anything until long after that.
+    wire [63:0] hs_capture;
+    wire        hs_capture_tgl;
+    wire        hs_capture_tgl_s;
+    reg         hs_capture_tgl_d = 1'b0;
+
+synch_3 s_hstgl (hs_capture_tgl, hs_capture_tgl_s, clk_74a);
+
+always @(posedge clk_74a) begin
+    // hs_capture is stable for a second either side of its toggle, so the
+    // toggle is the only thing that needs synchronising.
+    hs_capture_tgl_d <= hs_capture_tgl_s;
+    if (hs_capture_tgl_s != hs_capture_tgl_d) hs_file <= hs_capture;
+end
+
+// The save file arrives the same way the ROM does. Catching bridge writes by
+// hand looked simpler, but the address runs a word ahead of the data, so the
+// two halves of an eight byte slot land swapped -- which put "7650   8" on the
+// panel instead of "   87650". data_loader already does the edge detect, the
+// endian swap and the byte addressing, and the ROM slot has been loading
+// through it since this core booted for the first time.
+    wire       hs_load_wr;
+    wire [3:0] hs_load_addr;
+    wire [7:0] hs_load_data;
+
+data_loader #(
+    .ADDRESS_MASK_UPPER_4 ( 4'h3 ),
+    .ADDRESS_SIZE         ( 4 ),
+    .OUTPUT_WORD_SIZE     ( 1 )
+) hs_loader (
+    .clk_74a              ( clk_74a ),
+    .clk_memory           ( clk_core_24576 ),
+
+    .bridge_wr            ( bridge_wr ),
+    .bridge_endian_little ( bridge_endian_little ),
+    .bridge_addr          ( bridge_addr ),
+    .bridge_wr_data       ( bridge_wr_data ),
+
+    .write_en             ( hs_load_wr ),
+    .write_addr           ( hs_load_addr ),
+    .write_data           ( hs_load_data )
+);
+
+// Assembled in the core clock domain, so the game side reads it directly with
+// no crossing at all. Byte 0 is $8060. A slot write means a different game is
+// arriving, so drop the old bytes first: if that game has no save file of its
+// own, nothing will overwrite them and the last game's score would be restored
+// into it.
+    reg [63:0] hs_load = {64{1'b1}};
+    reg        download_done_d = 1'b0;
+always @(posedge clk_core_24576) begin
+    download_done_d <= download_done_s;
+    if (download_done_d && !download_done_s)
+        hs_load <= {64{1'b1}};
+    else if (hs_load_wr && hs_load_addr < 4'd8)
+        hs_load[hs_load_addr*8 +: 8] <= hs_load_data;
+end
 
     wire ena_analogizer_s;
 
@@ -610,6 +719,31 @@ synch_3 #(.WIDTH(16)) s_p1 (p1_controls, p1_controls_s, clk_core_24576);
                          p1_controls_s[1],  p1_controls_s[3],  p1_controls_s[2],
                          p1_controls_s[4],  1'b0 };
     wire [7:0] ctr2 = 8'hFF;   // P2 unused for now (active-low idle)
+
+// ---- high score restore/capture, wired to the game's work RAM port ----
+    wire [15:0] hs_address;
+    wire  [7:0] hs_data_in;
+    wire  [7:0] hs_data_out;
+    wire        hs_write;
+    wire        hs_access;
+
+NRX_HISCORE hiscore (
+    .clk         ( clk_core_24576 ),
+    .reset       ( game_reset ),
+    .loading     ( ~download_done_s ),
+    .core_paused ( pause_toggle | pause_menu_s ),
+
+    .save_in     ( hs_load ),
+    .save_out    ( hs_capture ),
+    .save_tgl    ( hs_capture_tgl ),
+
+    .hs_address  ( hs_address ),
+    .hs_data_in  ( hs_data_in ),
+    .hs_data_out ( hs_data_out ),
+    .hs_write    ( hs_write ),
+    .hs_access   ( hs_access ),
+    .pause_cpu   ( hs_pause )
+);
 
 // ---- game instance + external HVGEN video-timing generator ----
     wire  [8:0] rx_hpos, rx_vpos;
@@ -643,11 +777,11 @@ fpga_NRX game (
 
     .pause       ( pause_s ),
 
-    .hs_address  ( 16'h0 ),
-    .hs_data_in  ( 8'h0 ),
-    .hs_data_out (  ),
-    .hs_write    ( 1'b0 ),
-    .hs_access   ( 1'b0 )
+    .hs_address  ( hs_address ),
+    .hs_data_in  ( hs_data_in ),
+    .hs_data_out ( hs_data_out ),
+    .hs_write    ( hs_write ),
+    .hs_access   ( hs_access )
 );
 
 HVGEN hvgen (
