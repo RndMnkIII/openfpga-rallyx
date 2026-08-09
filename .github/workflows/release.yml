@@ -57,7 +57,7 @@ jobs:
           echo "### Install" >> CHANGELOG.md
           echo "" >> CHANGELOG.md
           echo "Unzip the \`Cores\` and \`Platforms\` folders to the root of your SD card." >> CHANGELOG.md
-          echo "**ROMs are not included** — place your own \`rallyx.rom\` and/or \`nrallyx.rom\` (21,280 bytes each) in \`/Assets/rallyx/common/\`. The core prompts you to pick one on first boot and remembers the choice; switch games from the Interact menu." >> CHANGELOG.md
+          echo "ROMs are not included. Place your own \`rallyx.rom\` and/or \`nrallyx.rom\` (21,280 bytes each) in \`/Assets/rallyx/common/\`. The Pocket asks which one to load each time the core starts, and you can switch games from the core menu while it's running." >> CHANGELOG.md
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
