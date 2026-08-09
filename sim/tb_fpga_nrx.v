@@ -11,8 +11,12 @@
 //  closed loop: fpga_NRX drives PCLK, HVGEN counts it, and the resulting
 //  HP/VP feed the vblank strobe back into the CPU glue.
 //
+//  It also pins the controller/switch read path: which address returns which
+//  port, and that the byte gets to the CPU without a clock edge, the way the
+//  board's input buffers do it.
+//
 //  T80s is VHDL and stubbed out (see stubs.v) -- what is under test is the
-//  clock divider and the interrupt raster position, not the CPU.
+//  clock divider, the interrupt raster position and the bus glue, not the CPU.
 //
 //  NOTE: the divider regs have no initial value and no reset; forced below to
 //  the zero the hardware powers up with.
@@ -27,6 +31,13 @@ reg CLK24M = 0;
 always #20.345 CLK24M = ~CLK24M;      // 24.576 MHz
 
 reg RESET = 1;
+
+// Driveable so the input read path can be exercised; idle is all-ones because
+// CTR1/CTR2 are negative logic.
+reg [7:0] dsw_r  = 8'hFF;
+reg [7:0] ctr1_r = 8'hFF;
+reg [7:0] ctr2_r = 8'hFF;
+
 wire [8:0] HP, VP;
 wire PCLK;
 wire [7:0] POUT, SND;
@@ -37,7 +48,7 @@ wire HBLK, VBLK, HSYN, VSYN;
 fpga_NRX dut (
     .RESET(RESET), .CLK24M(CLK24M),
     .HP(HP), .VP(VP), .PCLK(PCLK), .POUT(POUT), .SND(SND),
-    .DSW(8'hFF), .CTR1(8'hFF), .CTR2(8'hFF), .LAMP(LAMP),
+    .DSW(dsw_r), .CTR1(ctr1_r), .CTR2(ctr2_r), .LAMP(LAMP),
     .ROMCL(CLK24M), .ROMAD(16'h0), .ROMDT(8'h0), .ROMEN(1'b0),
     .pause(1'b0),
     .hs_address(16'h0), .hs_data_in(8'h0), .hs_data_out(),
@@ -53,6 +64,40 @@ HVGEN hvgen (
 
 real t0, t1, thigh, cclk_hz, x2_hz, duty, frame_hz;
 integer in_blank;
+
+task check_b(input [511:0] what, input [7:0] got, input [7:0] want);
+begin
+    if (got !== want) begin
+        $display("  FAIL  %0s = %02h, expected %02h", what, got, want);
+        tb_errors = tb_errors + 1;
+    end else
+        $display("  ok    %0s = %02h", what, got);
+end
+endtask
+
+// Hold a memory read on the bus. The Z80 stub drives its outputs with
+// continuous assignments, so force is the only way in; mr = RFSH_n & ~MREQ_n &
+// ~RD_n is what the glue decodes. No clock edge is waited on deliberately --
+// the point is that the input byte arrives without one.
+task bus_read(input [15:0] addr);
+begin
+    force dut.z80.A      = addr;
+    force dut.z80.RFSH_n = 1'b1;
+    force dut.z80.MREQ_n = 1'b0;
+    force dut.z80.RD_n   = 1'b0;
+    #1;
+end
+endtask
+
+task bus_idle;
+begin
+    release dut.z80.A;
+    release dut.z80.RFSH_n;
+    release dut.z80.MREQ_n;
+    release dut.z80.RD_n;
+    #1;
+end
+endtask
 
 initial begin
     $display("fpga_NRX");
@@ -106,6 +151,29 @@ initial begin
     end
 
     $display("  info  one interrupt every %0.3f ms", 1000.0/frame_hz);
+
+    // ---- input read path ----
+    // Rally-X has no Namco I/O custom: IN0, IN1 and the switch card sit behind
+    // buffers on the data bus, so a read is combinational and same-cycle. Three
+    // distinct patterns, so a swapped mux leg fails rather than aliasing.
+    ctr1_r = 8'hA5;
+    ctr2_r = 8'h3C;
+    dsw_r  = 8'h5A;
+
+    bus_read(16'hA000); check_b("$A000 reads IN0 (CTR1)", dut.idt, 8'hA5);
+    bus_read(16'hA080); check_b("$A080 reads IN1 (CTR2)", dut.idt, 8'h3C);
+    bus_read(16'hA100); check_b("$A100 reads the switch card (DSW)", dut.idt, 8'h5A);
+
+    // Unlatched: with the address parked on IN0, a button change reaches the
+    // CPU's data bus with no clock edge in between. If someone registers this
+    // path, the game samples last frame's buttons and this check fails.
+    bus_read(16'hA000);
+    ctr1_r = 8'hFE;                      // one button pressed, negative logic
+    #1;
+    check_b("IN0 is unlatched (no added cycle)", dut.idt, 8'hFE);
+
+    bus_idle;
+    check_b("data bus is quiet when no read is active", dut.idt, 8'h00);
 
     report("fpga_NRX");
 end
