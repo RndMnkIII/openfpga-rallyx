@@ -596,11 +596,19 @@ synch_3 #(1) analogizer_ena_sync({ena_analogizer}, {ena_analogizer_s}, clk_core_
 
 // ---- controls: cont1_key (active-high) -> CTR1 (active-low) ----
 // CTR bit order (MSB..LSB): {coin, start, up, down, right, left, smoke, unused}
+//
+// p1_controls is registered on clk_74a; the game runs on clk_core_24576, and
+// core_constraints.sdc declares those two asynchronous. That false-paths the
+// crossing, so Quartus reports nothing and the Z80 can sample a button bit
+// mid-transition. Synchronise it here, the way every other host signal in this
+// file already does. Both the Pocket pad and the SNAC pad funnel through
+// p1_controls, so one synchroniser covers both.
+    wire [15:0] p1_controls_s;
+synch_3 #(.WIDTH(16)) s_p1 (p1_controls, p1_controls_s, clk_core_24576);
 
-
-    wire [7:0] ctr1 = ~{ p1_controls[14], p1_controls[15], p1_controls[0],
-                         p1_controls[1],  p1_controls[3],  p1_controls[2],
-                         p1_controls[4],  1'b0 };
+    wire [7:0] ctr1 = ~{ p1_controls_s[14], p1_controls_s[15], p1_controls_s[0],
+                         p1_controls_s[1],  p1_controls_s[3],  p1_controls_s[2],
+                         p1_controls_s[4],  1'b0 };
     wire [7:0] ctr2 = 8'hFF;   // P2 unused for now (active-low idle)
 
 // ---- game instance + external HVGEN video-timing generator ----
