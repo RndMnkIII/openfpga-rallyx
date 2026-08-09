@@ -58,10 +58,6 @@ jobs:
           echo "" >> CHANGELOG.md
           echo "Unzip the \`Cores\` and \`Platforms\` folders to the root of your SD card." >> CHANGELOG.md
           echo "ROMs are not included. Place your own \`rallyx.rom\` and/or \`nrallyx.rom\` (21,280 bytes each) in \`/Assets/rallyx/common/\`. The Pocket asks which one to load each time the core starts, and you can switch games from the core menu while it's running." >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          echo "### Credits" >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          echo "Analogizer support is [RndMnkIII's](https://github.com/RndMnkIII/Analogizer) work, adapted for this core. The Rally-X arcade hardware is MiSTer-X's." >> CHANGELOG.md
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
