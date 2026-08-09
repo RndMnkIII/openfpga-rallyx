@@ -5,22 +5,22 @@ video output and SNAC controller support. This core supports it through
 RndMnkIII's [Analogizer](https://github.com/RndMnkIII/Analogizer) project, whose
 wiki is the authority on the adapter itself.
 
-Turn it on with **Enable Analogizer** in the Pocket menu. With it off, every
-Analogizer code path in the core is disabled.
+Turn it on with **Enable Analogizer** in the Pocket menu. With it off, the core
+disables every Analogizer code path.
 
 ## What we can and cannot answer
 
-The capability lists below are RndMnkIII's, verified against his hardware. They
-are not re-tested here, because no maintainer of this core owns the adapter, a
+The capability lists below are RndMnkIII's, verified against his hardware. We
+have not re-tested them, because no maintainer of this core owns the adapter, a
 CRT, or the SNAC harnesses. Send analog video and SNAC problems to the
 [Analogizer project](https://github.com/RndMnkIII/Analogizer), not to this repo.
 
-Three things are ours, and are the ones worth reporting here:
+Three things are ours, and they're the ones worth reporting here:
 
 - **Rally-X is single player.** Only player 1 reaches the game, so SNAC
   player-2 assignments do nothing.
-- **Blank the Pocket Screen does nothing.** The setting is read out of
-  `analogizer.bin` and then never wired to the video output.
+- **Blank the Pocket Screen does nothing.** The core reads the setting out of
+  `analogizer.bin` and then never wires it to the video output.
 - **Cart power is on for everyone.** The adapter draws power from the cartridge
   slot, so `cartridge_adapter` in `core.json` enables it for every user whether
   they own an adapter or not. The menu option does not gate it. Do not leave a
@@ -53,8 +53,8 @@ adapters only.
 Analogizer generates the encoded Y/C signal from RGB and drives it out of the
 VGA port's R and G pins, redirecting CSync to the VGA HSync pin. Turning that
 into S-Video or composite is the job of an external Y/C adapter on the VGA port,
-which takes its 5V from VGA pin 9. Only Mike Simone's active designs are
-officially supported:
+which takes its 5V from VGA pin 9. Only Mike Simone's active designs have
+official support:
 
 - [MiSTerAddons Active Y/C Adapter](https://misteraddons.com/collections/parts/products/yc-active-encoder-board/)
 - [MikeS11 Active VGA to Composite / S-Video](https://ultimatemister.com/product/mikes11-active-composite-svideo/)
@@ -67,9 +67,9 @@ encoder project this builds on.
 
 ## SNAC controllers
 
-SNAC lets you mix inputs from a real gamepad with the Pocket's built-in controls
-or a Dock USB or wireless controller. Supported pads, with the A/B switch
-position each one needs:
+SNAC lets you mix inputs from a real gamepad with the Pocket's built-in controls,
+or with a USB or wireless controller on the Dock. Supported pads, with the A/B
+switch position each one needs:
 
 - **DB15 Neo Geo.** Switch A.
 - **NES.** Switch A.
@@ -84,9 +84,9 @@ Every adapter version (v1, v2, v3) has a side slide switch labelled `A B` that
 has to match the controller you plugged in. PSX DualShock and DualShock 2 pads
 need the B side; everything else needs the A side.
 
-Handle that switch carefully. Use something thin and flat, a precision
-screwdriver with a 2.0 mm blade for example, rest the tip on the lever, and
-press gently until it slides over.
+Handle that switch carefully. Use something thin and flat, like a precision
+screwdriver with a 2.0 mm blade. Rest the tip on the lever and press gently until
+it slides over.
 
 ```
      ---
