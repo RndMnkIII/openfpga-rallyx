@@ -16,6 +16,7 @@ from _common import REPO_ROOT, Fail, ok, run, step
 # would drag most of the project into every compile.
 EXTRA_SOURCES = (
     "src/fpga/core/pocket_i2s.v",
+    "src/fpga/core/nrx_hiscore.v",
     "src/fpga/apf/common.v",
 )
 

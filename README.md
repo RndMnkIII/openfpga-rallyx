@@ -55,6 +55,17 @@ menu while it's running.
 
 The script only needs Python 3.
 
+### High scores
+
+The core keeps your high score between sessions. There's nothing to set up and
+no menu entry for it. The Pocket writes the score out when you quit the core,
+turn the Pocket off, or put it to sleep, and reads it back the next time you
+start the game.
+
+Each game gets its own file, named after the ROM you loaded and saved to
+`Saves/rallyx/common/` — `rallyx.rom` gives you `rallyx.sav`. Delete the file
+if you want the high score back at the factory default.
+
 ## Analogizer
 
 [Analogizer](https://github.com/RndMnkIII/Analogizer) is a cartridge-slot adapter

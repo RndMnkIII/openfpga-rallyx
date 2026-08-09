@@ -24,6 +24,18 @@
                 ],
                 "address": "0xF7000000",
                 "nonvolatile": false
+            },
+            {
+                "name": "High Score",
+                "id": 1,
+                "required": false,
+                "parameters": "0x4",
+                "extensions": [
+                    "sav"
+                ],
+                "size_maximum": 8,
+                "address": "0x30000000",
+                "nonvolatile": true
             }
         ]
     }
