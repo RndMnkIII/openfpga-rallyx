@@ -1,6 +1,5 @@
 > [!NOTE]
-> 🤖 Development of this core was made with Claude Opus 5 (1M context) in
-> Claude Code.
+> 🤖 This core was developed with Claude Opus 5 (1M context) in Claude Code.
 
 # openFPGA-RallyX
 
@@ -8,46 +7,66 @@ An Analogue Pocket core that plays both Rally-X and New Rally-X.
 
 ## Installation
 
-The core installs two ways. The game ROM is on you either way.
+There are two ways to get the core onto your card. You will have to find the game
+ROM yourself.
 
 ### With Pupdate
 
-[Pupdate](https://github.com/mattpannella/pupdate/releases) is the short path.
-This core is on its list, so Pupdate downloads it, installs it to
-`Cores/MorganVieira.Rally-X`, and picks up every later release without you
-watching this page for one. It is also what generates the `analogizer.bin` an
-Analogizer adapter needs, which [ANALOGIZER.md](ANALOGIZER.md) covers.
+[Pupdate](https://github.com/mattpannella/pupdate/releases) is the easy way. This
+core is on its list, so Pupdate will fetch it, install it to
+`Cores/MorganVieira.Rally-X`, and keep it current as new versions are released.
+
+If you run an Analogizer adapter, Pupdate is also what writes its
+`analogizer.bin` config file. [ANALOGIZER.md](ANALOGIZER.md) covers that.
 
 ### By hand
 
-Download the [latest release](https://github.com/morgan-vieira/openFPGA-RallyX/releases/latest),
-unzip it, and merge `Cores`, `Platforms` and `Assets` into the root of your
-Pocket's SD card. The archive is already laid out the way the Pocket expects, so
-nothing needs renaming or moving once it is across.
+Grab the [latest release](https://github.com/morgan-vieira/openFPGA-RallyX/releases/latest),
+unzip it, and merge `Cores`, `Platforms` and `Assets` into the root of your SD
+card. The zip is already laid out the way the Pocket expects, so there's nothing
+to rename or move once it's across.
 
 ### The game ROM
 
-Both paths stop here. The core ships with no ROM data in it and never will, so
-you obtain a MAME set yourself: `rallyx.zip` for Rally-X, `nrallyx.zip` for New
-Rally-X. Pupdate does not change that. A core is not a game.
+This part is the same either way. The core ships with no game data in it and
+never will, so you'll need a MAME set of your own: `rallyx.zip` for Rally-X, or
+`nrallyx.zip` for New Rally-X. Pupdate won't do this bit for you.
 
-The Pocket cannot read a MAME zip, so `tools/build_rom.py` assembles the parts
-into the one image the core loads:
+The Pocket can't read a MAME zip, so `tools/build_rom.py` turns one into the
+single image the core loads:
 
 ```
 python tools/build_rom.py --zip path/to/rallyx.zip
 ```
 
-The script works out which of the two sets the zip holds from the parts inside,
-checks every part against its CRC32, and writes `build/rallyx.rom` or
-`build/nrallyx.rom`, 21,280 bytes either way. The CRC32 check earns its keep:
-wrong or half-renamed parts assemble to exactly the right size and boot to a
-black screen, which reads as a broken core rather than a bad zip. The script
-refuses them at the door instead.
+It works out which of the two sets you handed it, checks every part against its
+CRC32, and writes `build/rallyx.rom` or `build/nrallyx.rom`. Either one comes out
+at 21,280 bytes.
 
-Copy the image onto the SD card at `Assets/rallyx/common/`, creating that folder
-if it does not exist. Both games can sit in it at once. The Pocket asks which one
-to load each time the core starts, and the core menu switches between them while
-running.
+That CRC32 check is worth having. Wrong or half-renamed parts still add up to
+exactly the right size, and the image you'd get boots to a black screen, which
+looks like a broken core rather than a bad zip, so the script rejects the file
+instead.
 
-Python 3 and nothing else is all the script needs.
+Copy the image to `Assets/rallyx/common/` on your SD card, creating that folder
+if it isn't there. Both games can live in it at once. The Pocket asks which one
+you want each time the core starts, and you can switch between them from the core
+menu while it's running.
+
+The script only needs Python 3.
+
+## Analogizer
+
+[Analogizer](https://github.com/RndMnkIII/Analogizer) is a cartridge-slot adapter
+that adds analog video output and SNAC controller support, and this core works
+with it. The full story is in [ANALOGIZER.md](ANALOGIZER.md): the video modes,
+which pads work and where the A/B switch has to sit for each one, where the
+config actually lives, and which problems to report here rather than upstream.
+
+Before you plug anything in: the adapter draws its power from the cartridge slot,
+so this core switches that slot on for everybody, adapter or not. Don't leave a
+cartridge in the slot while this core is running.
+
+## Legal
+
+TBD
