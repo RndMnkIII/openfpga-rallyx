@@ -49,14 +49,12 @@ GHDL refuses to bind `T80` inside `T80s` — the component is declared in
 rule will not resolve that. The symptom is a silent `instance "u0" of component
 "T80" is not bound` warning and a CPU that never executes anything.
 
-**Known T80 deviation: unconditional `RET` costs 11 T-states, not 10.** Measured
-on all three `RET`s in the test program. T80 runs it down the same path as a
-*taken* `RET cc`, which legitimately costs 11. `RET cc` itself is correct in
-both directions (5 not-taken, 11 taken), and the other 26 instructions match the
-Z80 exactly. The deviation is listed in the bench's `ALLOW` array so a
-regression still fails while a characterised gap does not leave the suite
-permanently red — set `ALLOW` to `EXPECT` to make it a hard failure instead.
-T80 is vendored third-party VHDL and has not been modified.
+**The vendored T80 has one local timing correction.** Its original microcode
+gave unconditional `RET` a five-state opcode-fetch cycle, making the instruction
+take 11 T-states. The Z80 uses the normal four-state fetch and takes 10. The
+local change corrects that fetch while leaving conditional returns alone: a
+not-taken `RET cc` takes 5 T-states and a taken one takes 11. The timing bench
+checks all three paths as hard failures.
 
 **The CPU is tested for answers, not just for timing.** `tb_t80_timing` proves
 T80 spends the right number of clocks per instruction; it says nothing about

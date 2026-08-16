@@ -107,15 +107,6 @@ architecture sim of tb_t80_timing is
         4, 7, 7, 4, 4, 4, 10, 6, 11, 4, 4, 10, 7, 7, 10, 11, 10, 17, 10, 17, 10, 4, 17, 5, 10, 17, 11, 12, 4
     );
 
-    -- Known T80 deviations from the Z80, measured not assumed. T80 runs an
-    -- unconditional RET down the same path as a TAKEN RET cc, which costs 11
-    -- rather than the dedicated 10 -- reproducible on all three RETs below.
-    -- Listed so a regression still fails while a known, characterised gap does
-    -- not leave the suite permanently red. Set to EXPECT to make it a hard fail.
-    constant ALLOW : ticks_t := (
-        4, 7, 7, 4, 4, 4, 10, 6, 11, 4, 4, 10, 7, 7, 10, 11, 10, 17, 11, 17, 11, 4, 17, 5, 11, 17, 11, 12, 4
-    );
-
     signal errors : integer := 0;
 
 begin
@@ -154,7 +145,6 @@ begin
         variable m1_prev  : std_logic := '1';
         variable delta    : integer;
         variable ok       : integer := 0;
-        variable devs     : integer := 0;
     begin
         report "T80 instruction cycle timing";
 
@@ -177,12 +167,6 @@ begin
                             report "  ok    " & NAMES(idx) & " = " &
                                    integer'image(delta) & " T-states";
                             ok := ok + 1;
-                        elsif delta = ALLOW(idx) then
-                            report "  DEV   " & NAMES(idx) & " = " &
-                                   integer'image(delta) & " T-states, Z80 is " &
-                                   integer'image(EXPECT(idx)) &
-                                   "  (known T80 deviation)";
-                            devs := devs + 1;
                         else
                             report "  FAIL  " & NAMES(idx) & " = " &
                                    integer'image(delta) & " T-states, expected " &
@@ -204,13 +188,9 @@ begin
         if idx <= NAMES'high then
             report "FAIL  T80 cycle timing -- only " & integer'image(idx) &
                    " of " & integer'image(NAMES'length) & " instructions retired";
-        elsif errors = 0 and devs = 0 then
+        elsif errors = 0 then
             report "PASS  T80 cycle timing matches the Z80 on all " &
                    integer'image(ok) & " instructions";
-        elsif errors = 0 then
-            report "PASS  T80 cycle timing: " & integer'image(ok) &
-                   " match the Z80, " & integer'image(devs) &
-                   " known deviation(s)";
         else
             report "FAIL  T80 cycle timing -- " & integer'image(errors) &
                    " unexpected mismatch(es)";

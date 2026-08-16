@@ -59,6 +59,7 @@
 --	0240 : Added (IX/IY+d) states, removed op-codes from mode 2 and added all remaining mode 3 op-codes
 --
 --	0242 : Fixed I/O instruction timing, cleanup
+--	Rally-X local: Fixed unconditional RET timing from 11 to 10 T-states
 --
 
 library IEEE;
@@ -1157,7 +1158,7 @@ begin
 			MCycles <= "011";
 			case to_integer(unsigned(MCycle)) is
 			when 1 =>
-				TStates <= "101";
+				TStates <= "100";
 				Set_Addr_TO <= aSP;
 			when 2 =>
 				IncDec_16 <= "0111";
