@@ -575,18 +575,25 @@ data_loader #(
     .write_data           ( ioctl_dout )
 );
 
-// ---- hold the game in reset until all ROM slots are loaded ----
+// ---- hold the game in reset while the game ROM loads ----
 // tracked in the clk_74a (bridge) domain, then synchronized into the game clock.
-    reg  download_active = 1'b0;
-    reg  download_done   = 1'b0;
+//
+// The game ROM is slot 0, and it is the only slot that decides whether the game
+// may run. APF sends [0082] Data slot request write long after boot too: the
+// high-score slot is nonvolatile, so saving a score brings one with it. Gating
+// on every slot meant a save reset the running game, and the reset re-armed the
+// save and reset it again -- issue #8, a black screen and the power-on
+// self-test flickering forever. Reloading slot 0 to switch games must still
+// reset, so this watches the slot id rather than watching for the first boot.
+// Every other slot loads underneath a game that keeps running.
+    localparam [15:0] ROM_SLOT_ID = 16'd0;
+
+    reg  download_done = 1'b0;
 always @(posedge clk_74a) begin
-    if (dataslot_requestwrite) begin
-        download_active <= 1'b1;
-        download_done   <= 1'b0;
-    end else if (dataslot_allcomplete) begin
-        download_active <= 1'b0;
-        download_done   <= 1'b1;
-    end
+    if (dataslot_requestwrite && dataslot_requestwrite_id == ROM_SLOT_ID)
+        download_done <= 1'b0;
+    else if (dataslot_allcomplete)
+        download_done <= 1'b1;
 end
 
     wire download_done_s;
