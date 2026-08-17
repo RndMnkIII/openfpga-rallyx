@@ -1,8 +1,9 @@
-# Local-only: reference checkouts and packaged SD output
+# Local-only: reference checkouts, packaged SD output, and scratch work
 .repos/
 release/
 .roms/
 .ignore/
+tmp/
 
 # Quartus build databases and outputs (regenerated on compile)
 db/
