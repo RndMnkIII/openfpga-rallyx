@@ -962,7 +962,7 @@ mf_pllbase mp1 (
 
     //create aditional switch to blank Pocket screen.
     wire [23:0] video_rgb_rallyx;
-    assign video_rgb_rallyx = (pocket_blank_screen && analogizer_ena) ? 24'h000: vidout_rgb;
+    assign video_rgb_rallyx = (pocket_blank_screen && analogizer_ena) ? 24'h000000: vidout_rgb;
 
 
     //switch between Analogizer SNAC and Pocket Controls for P1-P4 (P3,P4 when uses PCEngine Multitap)
